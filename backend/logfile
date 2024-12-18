@@ -1,0 +1,35 @@
+2024-12-17 09:35:52.989 EST [23333] LOG:  starting PostgreSQL 14.15 (Homebrew) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit
+2024-12-17 09:35:52.993 EST [23333] LOG:  could not bind IPv6 address "::1": Address already in use
+2024-12-17 09:35:52.993 EST [23333] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2024-12-17 09:35:52.993 EST [23333] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2024-12-17 09:35:52.993 EST [23333] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2024-12-17 09:35:52.993 EST [23333] WARNING:  could not create listen socket for "localhost"
+2024-12-17 09:35:52.993 EST [23333] FATAL:  could not create any TCP/IP sockets
+2024-12-17 09:35:52.993 EST [23333] LOG:  database system is shut down
+2024-12-17 09:37:33.768 EST [23890] LOG:  starting PostgreSQL 14.15 (Homebrew) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit
+2024-12-17 09:37:33.771 EST [23890] LOG:  could not bind IPv6 address "::1": Address already in use
+2024-12-17 09:37:33.771 EST [23890] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2024-12-17 09:37:33.771 EST [23890] LOG:  could not bind IPv4 address "127.0.0.1": Address already in use
+2024-12-17 09:37:33.771 EST [23890] HINT:  Is another postmaster already running on port 5432? If not, wait a few seconds and retry.
+2024-12-17 09:37:33.771 EST [23890] WARNING:  could not create listen socket for "localhost"
+2024-12-17 09:37:33.771 EST [23890] FATAL:  could not create any TCP/IP sockets
+2024-12-17 09:37:33.772 EST [23890] LOG:  database system is shut down
+2024-12-17 09:38:39.426 EST [24249] LOG:  starting PostgreSQL 14.15 (Homebrew) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 16.0.0 (clang-1600.0.26.4), 64-bit
+2024-12-17 09:38:39.431 EST [24249] LOG:  listening on IPv6 address "::1", port 5432
+2024-12-17 09:38:39.431 EST [24249] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2024-12-17 09:38:39.434 EST [24249] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2024-12-17 09:38:39.439 EST [24250] LOG:  database system was shut down at 2024-12-17 09:35:47 EST
+2024-12-17 09:38:39.442 EST [24249] LOG:  database system is ready to accept connections
+2024-12-17 09:38:52.869 EST [24326] FATAL:  role "your_db_user" does not exist
+2024-12-17 09:38:52.872 EST [24327] FATAL:  role "your_db_user" does not exist
+2024-12-17 09:39:17.255 EST [24455] ERROR:  relation "smileapp_dentists" does not exist at character 13
+2024-12-17 09:39:17.255 EST [24455] STATEMENT:  INSERT INTO "smileapp_dentists" ("first_name", "last_name", "email", "administrator", "user_id", "avatar", "disabled") VALUES ('Doc', 'Smith', 'doc@example.com', true, 1, NULL, false) RETURNING "smileapp_dentists"."id"
+2024-12-17 09:39:17.698 EST [24455] ERROR:  relation "smileapp_dentists" does not exist at character 13
+2024-12-17 09:39:17.698 EST [24455] STATEMENT:  INSERT INTO "smileapp_dentists" ("first_name", "last_name", "email", "administrator", "user_id", "avatar", "disabled") VALUES ('Doc', 'Smith', 'doc@example.com', true, 3, NULL, false) RETURNING "smileapp_dentists"."id"
+2024-12-17 09:39:18.139 EST [24455] ERROR:  relation "smileapp_dentists" does not exist at character 13
+2024-12-17 09:39:18.139 EST [24455] STATEMENT:  INSERT INTO "smileapp_dentists" ("first_name", "last_name", "email", "administrator", "user_id", "avatar", "disabled") VALUES ('Doc', 'Smith', 'doc@example.com', true, 5, NULL, false) RETURNING "smileapp_dentists"."id"
+2024-12-17 09:39:18.582 EST [24455] ERROR:  relation "smileapp_dentists" does not exist at character 13
+2024-12-17 09:39:18.582 EST [24455] STATEMENT:  INSERT INTO "smileapp_dentists" ("first_name", "last_name", "email", "administrator", "user_id", "avatar", "disabled") VALUES ('Doc', 'Smith', 'doc@example.com', true, 7, NULL, false) RETURNING "smileapp_dentists"."id"
+2024-12-17 09:40:28.287 EST [24854] FATAL:  database "Jay Dhaliwal" does not exist
+2024-12-17 09:40:35.437 EST [24901] FATAL:  database "Jay Dhaliwal" does not exist
+2024-12-17 09:41:36.703 EST [25226] FATAL:  database "dhalijs1" does not exist
