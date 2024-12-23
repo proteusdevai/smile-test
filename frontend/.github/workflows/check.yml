@@ -1,89 +1,158 @@
 name: ✅ Check
+
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-        types:
-            - opened
-            - reopened
-            - synchronize
-            - ready_for_review
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 permissions:
-    contents: write
-    checks: write
+  contents: write
+  checks: write
 
 jobs:
-    lint:
-        name: 🔬 ESLint
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
-        steps:
-            - name: 📥 Checkout repo
-              uses: actions/checkout@v4
+  lint_frontend:
+    name: 🔬 Lint Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
 
-            - name: ⚙️ Setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: npm
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-            - name: 📥 Download deps
-              run: npm install
+      - name: 📥 Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
 
-            - name: 🔬 Lint
-              uses: wearerequired/lint-action@v2
-              with:
-                  eslint: true
-                  eslint_args: "**/*.{mjs,ts,tsx}"
-                  prettier: true
-                  prettier_args: "--config ./.prettierrc.mjs \"**/*.{js,json,ts,tsx,css,md,html}\""
+      - name: 🔬 Lint Frontend Code
+        uses: wearerequired/lint-action@v2
+        with:
+          eslint: true
+          eslint_args: "**/*.{mjs,ts,tsx}"
+          prettier: true
+          prettier_args: "--config ./.prettierrc.mjs \"**/*.{js,json,ts,tsx,css,md,html}\""
 
-    test:
-        name: 🔎 Test
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
-        steps:
-            - name: 📥 Checkout repo
-              uses: actions/checkout@v4
+  lint_backend:
+    name: 🔬 Lint Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
 
-            - name: ⚙️ Setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: npm
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-            - name: 📥 Download deps
-              run: npm install
+      - name: 📥 Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
 
-            - name: 🔎 Test
-              run: make test-ci
+      - name: 🔬 Lint Backend Code
+        run: flake8 .
 
+  test_frontend:
+    name: 🔎 Test Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
 
-    build:
-        name: 🔨 Build
-        timeout-minutes: 10
-        runs-on: ubuntu-latest
-        if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
-        steps:
-            - name: 📥 Checkout repo
-              uses: actions/checkout@v4
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-            - name: ⚙️ Setup node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20
-                  cache: npm
+      - name: 📥 Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
 
-            - name: 📥 Download deps
-              run: npm install
+      - name: 🔎 Run Frontend Tests
+        working-directory: ./frontend
+        run: npm test -- --watchAll=false
 
-            - name: 🔨 Build
-              run: npm run build
+  test_backend:
+    name: 🔎 Test Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
+    services:
+      db:
+        image: postgres:14
+        env:
+          POSTGRES_USER: django
+          POSTGRES_PASSWORD: django
+          POSTGRES_DB: django
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📥 Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔎 Run Backend Tests
+        env:
+          DATABASE_URL: postgres://django:django@localhost:5432/django
+        run: |
+          python manage.py makemigrations --check
+          python manage.py migrate
+          python manage.py test
+
+  build_frontend:
+    name: 🔨 Build Frontend
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft || github.event_name == 'push' }}
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 📥 Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: 🔨 Build Frontend
+        working-directory: ./frontend
+        run: npm run build

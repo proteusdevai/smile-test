@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useDataProvider } from 'react-admin';
 import { Navigate } from 'react-router-dom';
-import { CrmDataProvider } from '../providers/types';
+import { AppDataProvider } from '../providers/types';
 import { LoginForm } from './LoginForm';
 import { LoginSkeleton } from './LoginSkeleton';
 
 export const LoginPage = () => {
-    const dataProvider = useDataProvider<CrmDataProvider>();
+    const dataProvider = useDataProvider<AppDataProvider>();
     const {
         data: isInitialized,
         error,

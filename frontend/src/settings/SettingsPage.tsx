@@ -24,27 +24,27 @@ import {
 } from 'react-admin';
 import { useFormState } from 'react-hook-form';
 import ImageEditorField from '../misc/ImageEditorField';
-import { CrmDataProvider } from '../providers/types';
-import { Sale, SalesFormData } from '../types';
+import { AppDataProvider } from '../providers/types';
+import { Dentist, DentistFormData } from '../types';
 import { useMutation } from '@tanstack/react-query';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export const SettingsPage = () => {
     const [isEditMode, setEditMode] = useState(false);
     const { identity, refetch: refetchIdentity } = useGetIdentity();
-    const { data, refetch: refetchUser } = useGetOne('sales', {
+    const { data, refetch: refetchUser } = useGetOne('dentists', {
         id: identity?.id,
     });
     const notify = useNotify();
-    const dataProvider = useDataProvider<CrmDataProvider>();
+    const dataProvider = useDataProvider<AppDataProvider>();
 
     const { mutate } = useMutation({
         mutationKey: ['signup'],
-        mutationFn: async (data: SalesFormData) => {
+        mutationFn: async (data: DentistFormData) => {
             if (!identity) {
                 throw new Error('Record not found');
             }
-            return dataProvider.salesUpdate(identity.id, data);
+            return dataProvider.dentistsUpdate(identity.id, data);
         },
         onSuccess: () => {
             refetchIdentity();
@@ -85,10 +85,10 @@ const SettingsForm = ({
     setEditMode: (value: boolean) => void;
 }) => {
     const notify = useNotify();
-    const record = useRecordContext<Sale>();
+    const record = useRecordContext<Dentist>();
     const { identity, refetch } = useGetIdentity();
     const { isDirty } = useFormState();
-    const dataProvider = useDataProvider<CrmDataProvider>();
+    const dataProvider = useDataProvider<AppDataProvider>();
 
     const { mutate: updatePassword } = useMutation({
         mutationKey: ['updatePassword'],
@@ -96,7 +96,7 @@ const SettingsForm = ({
             if (!identity) {
                 throw new Error('Record not found');
             }
-            return dataProvider.updatePassword(identity.id);
+            return dataProvider.updatePassword(identity.id, "Test");
         },
         onSuccess: () => {
             notify(
@@ -112,11 +112,11 @@ const SettingsForm = ({
 
     const { mutate: mutateSale } = useMutation({
         mutationKey: ['signup'],
-        mutationFn: async (data: SalesFormData) => {
+        mutationFn: async (data: DentistFormData) => {
             if (!record) {
                 throw new Error('Record not found');
             }
-            return dataProvider.salesUpdate(record.id, data);
+            return dataProvider.dentistsUpdate(record.id, data);
         },
         onSuccess: () => {
             refetch();

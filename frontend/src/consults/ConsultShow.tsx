@@ -28,7 +28,7 @@ import {
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { DialogCloseButton } from '../misc/DialogCloseButton';
-import { NotesIterator } from '../notes';
+import { NotesIterator } from '.././messages';
 import { useConfigurationContext } from '../root/ConfigurationContext';
 import { Consult } from '../types';
 import { PatientList } from './PatientList';

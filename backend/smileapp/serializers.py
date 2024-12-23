@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import (
     Dentists,
     Patients,
@@ -6,8 +7,10 @@ from .models import (
     Messages,
     ConsultNotes,
     Tags,
-    Tasks
+    Tasks,
+    RAFile
 )
+
 
 class DentistsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,22 +22,18 @@ class PatientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patients
         exclude = ['user']
-        fields = [
-            'id', 'first_name', 'last_name', 'email', 'phone_number',
-            'smile_goals', 'first_seen', 'last_seen', 'stage', 'tags'
-        ]
 
 
 class ConsultsSerializer(serializers.ModelSerializer):
-    patient_name = serializers.CharField(source='patient.first_name', read_only=True)
-    dentist_name = serializers.CharField(source='dentist.first_name', read_only=True)
+    patient = PatientsSerializer(read_only=True)
+    dentist = DentistsSerializer(read_only=True)
 
     class Meta:
         model = Consults
         fields = [
-            'id', 'patient_name', 'category', 'stage', 'description', 'amount',
+            'id', 'category', 'stage', 'description', 'amount',
             'created_at', 'updated_at', 'archived_at', 'expected_visit_date',
-            'dentist_name', 'index'
+            'patient', 'dentist', 'index'
         ]
 
 
@@ -68,3 +67,28 @@ class TasksSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'patient_name', 'dentist_name', 'type', 'text', 'due_date', 'done_date'
         ]
+
+
+class PatientsSignupSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True, min_length=8)
+    first_name = serializers.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
+    phone_number = serializers.CharField(max_length=15, required=False, allow_blank=True)
+    smile_goals = serializers.CharField(max_length=500)
+    dentist_id = serializers.IntegerField()  # Foreign key to the dentist
+
+    def validate_email(self, value):
+        """
+        Ensure the email is not already registered.
+        """
+        if Patients.objects.filter(email=value).exists():
+            raise serializers.ValidationError("A patient with this email already exists.")
+        return value
+
+
+class RAFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RAFile
+        fields = ['id', 'file', 'title', 'src', 'path', 'type']  # Include all metadata fields
+        read_only_fields = ['src', 'path']  # These fields will be auto-calculated

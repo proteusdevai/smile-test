@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Messages, Patients, ConsultNotes, Consults, Dentists, Tags, Tasks
+from models import Messages, Patients, ConsultNotes, Consults, Dentists, Tags, Tasks
 
 admin.site.register(Messages)
 admin.site.register(Patients)

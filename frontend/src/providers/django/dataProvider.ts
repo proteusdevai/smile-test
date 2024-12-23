@@ -1,50 +1,31 @@
 import drfProvider, {
-    tokenAuthProvider,
     fetchJsonWithAuthToken,
 } from 'ra-data-django-rest-framework';
 
 import {
-    CreateParams,
     DataProvider,
     GetListParams,
     Identifier,
-    UpdateParams,
     withLifecycleCallbacks,
 } from 'react-admin';
 import {
-    Patient,
     Message,
     Consult,
-    ConsultNote,
     RAFile,
-    Dentist,
     DentistFormData,
     SignUpData,
 } from '../../types';
 import { getActivityLog } from '../commons/activity';
-import { getIsInitialized } from './authProvider';
 
-const baseDataProvider = drfProvider('/api', fetchJsonWithAuthToken);
+const baseDataProvider = drfProvider(
+    'http://127.0.0.1:8000/api',
+    fetchJsonWithAuthToken
+);
 
 const dataProviderWithCustomMethods = {
     ...baseDataProvider,
-    async getList(resource: string, params: GetListParams) {
-        if (resource === 'patients') {
-            return baseDataProvider.getList('patients_summary', params);
-        }
-
-        return baseDataProvider.getList(resource, params);
-    },
-    async getOne(resource: string, params: any) {
-        if (resource === 'patients') {
-            return baseDataProvider.getOne('patients_summary', params);
-        }
-
-        return baseDataProvider.getOne(resource, params);
-    },
-
     async signUp({ email, password, first_name, last_name }: SignUpData) {
-        const response = await fetch('/api/auth/sign-up/', {
+        const response = await fetch('/api/patient-signup/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password, first_name, last_name }),
@@ -55,9 +36,6 @@ const dataProviderWithCustomMethods = {
             console.error('signUp.error', data);
             throw new Error('Failed to create account');
         }
-
-        getIsInitialized._is_initialized_cache = true;
-
         return {
             id: data.id,
             email,
@@ -83,7 +61,7 @@ const dataProviderWithCustomMethods = {
         return result;
     },
     async updatePassword(id: Identifier, newPassword: string) {
-        const response = await fetch(`/api/dentists/${id}/update_password/`, {
+        const response = await fetch(`/api/patients/${id}/update_password/`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ password: newPassword }),
@@ -97,40 +75,39 @@ const dataProviderWithCustomMethods = {
 
         return data;
     },
-    async unarchiveconsult(consult: Consult) {
-        // get all consults where stage is the same as the consult to unarchive
-        const consults = await baseDataProvider.getList<Consult>('consults', {
-            filter: { stage: consult.stage },
-            pagination: { page: 1, perPage: 1000 },
-            sort: { field: 'index', order: 'ASC' },
-        });
+    async unarchiveConsult(consult: Consult) {
+        try {
+            // Send a PATCH request to unarchive the consult
+            const response = await fetch(`/api/consults/unarchive/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: consult.id }), // Pass the consult ID in the body
+            });
 
-        // set index for each consult starting from 1, if the consult to unarchive is found, set its index to the last one
-        const updatedconsults = consults.map((d, index) => ({
-            ...d,
-            index: d.id === consult.id ? 0 : index + 1,
-            archived_at: d.id === consult.id ? null : d.archived_at,
-        }));
+            // Parse the response JSON
+            const data = await response.json();
 
-        return await Promise.all(
-            updatedconsults.map(updatedconsult =>
-                baseDataProvider.update('consults', {
-                    id: updatedconsult.id,
-                    data: updatedconsult,
-                    previousData: consults.find(d => d.id === updatedconsult.id),
-                })
-            )
-        );
+            // Check if the response is not OK and throw an error
+            if (!response.ok) {
+                console.error('unarchiveConsult.error', response.status, data);
+                throw new Error(
+                    data?.error ||
+                        `Failed to unarchive consult with ID: ${consult.id}`
+                );
+            }
+
+            return data; // Return the successful response
+        } catch (error) {
+            console.error('unarchiveConsult.error', error);
+            throw error; // Rethrow the error for higher-level handling
+        }
     },
     async getActivityLog(companyId?: Identifier) {
         return getActivityLog(baseDataProvider, companyId);
     },
-    async isInitialized() {
-        return getIsInitialized();
-    },
 } satisfies DataProvider;
 
-export type CrmDataProvider = typeof dataProviderWithCustomMethods;
+export type AppDataProvider = typeof dataProviderWithCustomMethods;
 
 export const dataProvider = withLifecycleCallbacks(
     dataProviderWithCustomMethods,
@@ -140,7 +117,9 @@ export const dataProvider = withLifecycleCallbacks(
             beforeSave: async (data: Message, _, __) => {
                 if (data.attachments) {
                     for (const file of data.attachments) {
-                        await uploadToBucket(file);
+                        const uploadResult = await uploadToBucket(file);
+                        file.path = uploadResult.path;
+                        file.src = uploadResult.url;
                     }
                 }
                 return data;
@@ -148,10 +127,12 @@ export const dataProvider = withLifecycleCallbacks(
         },
         {
             resource: 'consultNotes',
-            beforeSave: async (data: ConsultNote, _, __) => {
+            beforeSave: async (data: Message, _, __) => {
                 if (data.attachments) {
                     for (const file of data.attachments) {
-                        await uploadToBucket(file);
+                        const uploadResult = await uploadToBucket(file);
+                        file.path = uploadResult.path;
+                        file.src = uploadResult.url;
                     }
                 }
                 return data;
@@ -163,25 +144,14 @@ export const dataProvider = withLifecycleCallbacks(
                 return applyFullTextSearch([
                     'first_name',
                     'last_name',
-                    'company_name',
-                    'title',
                     'email',
-                    'phone_1_number',
-                    'phone_2_number',
-                    'background',
                 ])(params);
-            },
-        },
-        {
-            resource: 'patients_summary',
-            beforeGetList: async params => {
-                return applyFullTextSearch(['first_name', 'last_name'])(params);
             },
         },
         {
             resource: 'consults',
             beforeGetList: async params => {
-                return applyFullTextSearch(['name', 'type', 'description'])(
+                return applyFullTextSearch(['patient', 'name', 'description'])(
                     params
                 );
             },
@@ -209,16 +179,25 @@ const applyFullTextSearch = (columns: string[]) => (params: GetListParams) => {
     };
 };
 
-const uploadToBucket = async (file: File) => {
+const uploadToBucket = async (file: RAFile) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file.rawFile);
 
-    const response = await fetch('/api/upload/', {
-        method: 'POST',
-        body: formData,
-    });
+    try {
+        const response = await fetch('/api/upload/', {
+            method: 'POST',
+            body: formData,
+        });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error('File upload failed');
-    return { path: data.path, url: data.url };
+        const data = await response.json();
+        if (!response.ok) {
+            console.error('uploadToBucket.error', data);
+            throw new Error('File upload failed');
+        }
+
+        return { path: data.path, url: data.url }; // Use the returned path and URL
+    } catch (error) {
+        console.error('uploadToBucket.error', error);
+        throw error; // Rethrow for higher-level handling
+    }
 };

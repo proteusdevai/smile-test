@@ -1,14 +1,21 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-from django.core.management.utils import get_random_secret_key
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+CONFIG_DIR = Path(__file__).resolve().parent
+BACKEND_DIR = CONFIG_DIR.parent
+ROOT_DIR = BACKEND_DIR.parent
+ROOT_URLCONF = BACKEND_DIR/'config.urls'
 
+MEDIA_DIR = ROOT_DIR / "media"
+MEDIA_URL = "/media/"
 SECRET_KEY = 'uqhv@ebigb1_8*l$@jaa*r)ci4-gm-wx@o_np4+&$nx-h5-c^z'
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,24 +40,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
-
-ROOT_URLCONF = 'config.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -95,19 +84,15 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Token expires after 30 mins
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Refresh token valid for 7 days
-    'ROTATE_REFRESH_TOKENS': True,                  # Issue a new refresh token on use
-    'BLACKLIST_AFTER_ROTATION': True,               # Blacklist the old refresh token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),  # Refresh token valid for 7 days
+    'ROTATE_REFRESH_TOKENS': True,  # Issue a new refresh token on use
+    'BLACKLIST_AFTER_ROTATION': True,  # Blacklist the old refresh token
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 # CORS configuration
-# Allow requests from frontend dev server (e.g., http://localhost:3000)
-CORS_ALLOW_ALL_ORIGINS = True
-# Or, to be more restrictive:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "https://your-frontend-domain.com"
-# ]
+CORS_ALLOWED_ORIGINS = [
+     "http://localhost:3000"
+]

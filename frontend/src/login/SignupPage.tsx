@@ -10,21 +10,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDataProvider, useLogin, useNotify } from 'react-admin';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Navigate } from 'react-router';
-import { CrmDataProvider } from '../providers/types';
+import { AppDataProvider } from '../providers/types';
 import { useConfigurationContext } from '../root/ConfigurationContext';
 import { SignUpData } from '../types';
 import { LoginSkeleton } from './LoginSkeleton';
 
 export const SignupPage = () => {
     const queryClient = useQueryClient();
-    const dataProvider = useDataProvider<CrmDataProvider>();
+    const dataProvider = useDataProvider<AppDataProvider>();
     const { logo, title } = useConfigurationContext();
-    const { data: isInitialized, isPending } = useQuery({
-        queryKey: ['init'],
-        queryFn: async () => {
-            return dataProvider.isInitialized();
-        },
-    });
 
     const { isPending: isSignUpPending, mutate } = useMutation({
         mutationKey: ['signup'],
@@ -35,7 +29,7 @@ export const SignupPage = () => {
             login({
                 email: data.email,
                 password: data.password,
-                redirectTo: '/contacts',
+                redirectTo: '/patients/inbox',
             }).then(() => {
                 notify('Initial user successfully created');
                 // FIXME: We should probably provide a hook for that in the ra-core package

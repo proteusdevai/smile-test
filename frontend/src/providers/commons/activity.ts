@@ -141,7 +141,7 @@ async function getNewDealsAndNotes(
     }
     if (filter.company_id) {
         // No company_id field in dealNote, filtering by related deals instead.
-        // This filter is only valid if a deal has less than 250 notes.
+        // This filter is only valid if a deal has less than 250 messages.
         const dealIds = deals.map(deal => deal.id).join(',');
         recentDealNotesFilter['deal_id@in'] = `(${dealIds})`;
     }

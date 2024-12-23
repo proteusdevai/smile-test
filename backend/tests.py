@@ -1,7 +1,9 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 from rest_framework.test import APIClient
-from django.contrib.auth.models import User
+
 from smileapp.models import Dentists, Patients, Consults, Messages, Tasks
+
 
 class PermissionsTestCase(TestCase):
 
@@ -83,7 +85,6 @@ class PermissionsTestCase(TestCase):
         self.patient_token = self.get_jwt_token('patient1', 'pass123')
         self.other_dentist_token = self.get_jwt_token('dentist2', 'pass123')
         self.other_patient_token = self.get_jwt_token('patient2', 'pass123')
-
 
     def get_jwt_token(self, username, password):
         """Helper method to obtain a JWT token for a given user."""

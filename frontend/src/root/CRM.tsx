@@ -22,7 +22,7 @@ import { SignupPage } from '../login/SignupPage';
 import {
     authProvider as defaultAuthProvider,
     dataProvider as defaultDataProvider,
-} from '../providers/supabase';
+} from '../providers/django';
 import dentists from '../dentists';
 import { SettingsPage } from '../settings/SettingsPage';
 import {
@@ -84,7 +84,7 @@ const defaultLightTheme = deepmerge(defaultTheme, {
  * @param {DealStage[]} dealStages - The stages of deals used in the application.
  * @param {RaThemeOptions} lightTheme - The theme to use when the application is in light mode.
  * @param {string} logo - The logo used in the CRM application.
- * @param {NoteStatus[]} noteStatuses - The statuses of notes used in the application.
+ * @param {NoteStatus[]} noteStatuses - The statuses of messages used in the application.
  * @param {string[]} taskTypes - The types of tasks used in the application.
  * @param {string} title - The title of the CRM application.
  *
