@@ -7,7 +7,7 @@ import { DentistList } from './DentistList';
 export default {
     list: DentistList,
     create: DentistCreate,
-    edit: DentistCreate,
+    edit: DentistEdit,
     recordRepresentation: (record: Dentist) =>
         `${record.first_name} ${record.last_name}`,
 };

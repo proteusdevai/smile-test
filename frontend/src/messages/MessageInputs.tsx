@@ -1,7 +1,7 @@
 import { Collapse, Stack } from '@mui/material';
 import { FileField, FileInput, TextInput } from 'react-admin';
 
-export const NoteInputs = ({
+export const MessageInputs = ({
     edition,
 }: {
     showStatus?: boolean;
@@ -12,7 +12,7 @@ export const NoteInputs = ({
         <>
             <TextInput
                 source="text"
-                label={edition ? 'Edit note' : 'Add a message'}
+                label={edition ? 'Edit message' : 'Add a message'}
                 variant="filled"
                 size="small"
                 multiline

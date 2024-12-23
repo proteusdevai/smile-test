@@ -1,26 +1,30 @@
-import { useQuery } from '@tanstack/react-query';
-import { useDataProvider } from 'react-admin';
-import { Navigate } from 'react-router-dom';
-import { AppDataProvider } from '../providers/types';
+import { useState, useEffect } from 'react';
 import { LoginForm } from './LoginForm';
 import { LoginSkeleton } from './LoginSkeleton';
 
 export const LoginPage = () => {
-    const dataProvider = useDataProvider<AppDataProvider>();
-    const {
-        data: isInitialized,
-        error,
-        isPending,
-    } = useQuery({
-        queryKey: ['init'],
-        queryFn: async () => {
-            return dataProvider.isInitialized();
-        },
-    });
+    const [isServerUp, setIsServerUp] = useState<boolean | null>(null);
 
-    if (isPending) return <LoginSkeleton />;
-    if (error) return <LoginForm />;
-    if (isInitialized) return <LoginForm />;
+    // Check if the Django server is up
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            try {
+                const response = await fetch('/api/health-check/'); // Replace with your health-check endpoint
+                if (response.ok) {
+                    setIsServerUp(true);
+                } else {
+                    setIsServerUp(false);
+                }
+            } catch (error) {
+                console.error('Server health check failed:', error);
+                setIsServerUp(false);
+            }
+        };
+        checkServerStatus();
+    }, []);
 
-    return <Navigate to="/sign-up" />;
+    if (isServerUp === null) return <LoginSkeleton />; // Show skeleton while checking the server status
+    if (!isServerUp) return <div>Server is down. Please try again later.</div>; // Handle server down case
+
+    return <LoginForm />; // Render the login form if the server is up
 };

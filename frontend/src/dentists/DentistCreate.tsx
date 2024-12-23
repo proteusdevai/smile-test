@@ -7,19 +7,19 @@ import {
     useRedirect,
 } from 'react-admin';
 import { SubmitHandler } from 'react-hook-form';
-import { DataProvider } from '../providers/types';
+import { AppDataProvider } from '../providers/types';
 import { DentistFormData } from '../types';
 import { DentistInputs } from './DentistInputs';
 
 export function DentistCreate() {
-    const dataProvider = DataProvider;
+    const dataProvider = useDataProvider<AppDataProvider>();
     const notify = useNotify();
     const redirect = useRedirect();
 
     const { mutate } = useMutation({
         mutationKey: ['signup'],
         mutationFn: async (data: DentistFormData) => {
-            return dataProvider.salesCreate(data);
+            return dataProvider.dentistCreate(data);
         },
         onSuccess: () => {
             notify(

@@ -11,9 +11,9 @@ import {
     useRedirect,
 } from 'react-admin';
 import { SubmitHandler } from 'react-hook-form';
-import { DataProvider } from '../providers/types';
-import { Sale, SalesFormData } from '../types';
-import { SalesInputs } from './SalesInputs';
+import { AppDataProvider } from '../providers/types';
+import { Dentist, DentistFormData } from '../types';
+import { DentistInputs } from './DentistInputs';
 
 function EditToolbar() {
     return (
@@ -26,27 +26,27 @@ function EditToolbar() {
 export function DentistEdit() {
     const { record } = useEditController();
 
-    const dataProvider = useDataProvider<CrmDataProvider>();
+    const dataProvider = useDataProvider<AppDataProvider>();
     const notify = useNotify();
     const redirect = useRedirect();
 
     const { mutate } = useMutation({
         mutationKey: ['signup'],
-        mutationFn: async (data: SalesFormData) => {
+        mutationFn: async (data: DentistFormData) => {
             if (!record) {
                 throw new Error('Record not found');
             }
-            return dataProvider.salesUpdate(record.id, data);
+            return dataProvider.dentistUpdate(record.id, data);
         },
         onSuccess: () => {
-            redirect('/sales');
+            redirect('/dentists');
         },
         onError: () => {
             notify('An error occurred. Please try again.');
         },
     });
 
-    const onSubmit: SubmitHandler<SalesFormData> = async data => {
+    const onSubmit: SubmitHandler<DentistFormData> = async data => {
         mutate(data);
     };
 
@@ -58,16 +58,16 @@ export function DentistEdit() {
                     onSubmit={onSubmit as SubmitHandler<any>}
                     record={record}
                 >
-                    <SaleEditTitle />
-                    <SalesInputs />
+                    <DentistEditTitle />
+                    <DentistInputs />
                 </SimpleForm>
             </Card>
         </Container>
     );
 }
 
-const SaleEditTitle = () => {
-    const record = useRecordContext<Sale>();
+const DentistEditTitle = () => {
+    const record = useRecordContext<Dentist>();
     if (!record) return null;
     return (
         <Typography variant="h6">

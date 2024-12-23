@@ -28,7 +28,7 @@ class PatientsViewSet(viewsets.ModelViewSet):
         return Patients.objects.filter(dentist=dentist)
 
 
-class SignupView(APIView):
+class PatientSignUpView(APIView):
     """
     View to handle patient signup. Creates a User and a Patient.
     """

@@ -6,12 +6,12 @@ import {
     Typography,
 } from '@mui/material';
 import { ReactNode, Fragment } from 'react';
-import { AttachmentNote } from '../types';
+import { AttachmentMessage } from '../types';
 
 type ActivityLogMessageCreatedProps = {
     header: ReactNode;
     text: string;
-    attachments?: AttachmentNote[];
+    attachments?: AttachmentMessage[];
 };
 
 export function ActivityLogMessage({
@@ -25,7 +25,7 @@ export function ActivityLogMessage({
     const paragraphs = text.split('\n');
     if (attachments !== undefined) {
         const imageAttachments = attachments.filter(
-            (attachment: AttachmentNote) => isImageMimeType(attachment.type)
+            (attachment: AttachmentMessage) => isImageMimeType(attachment.type)
         );
         return (
             <ListItem disableGutters>
@@ -65,7 +65,7 @@ export function ActivityLogMessage({
                             <ImageList cols={4} gap={8}>
                                 {imageAttachments.map(
                                     (
-                                        attachment: AttachmentNote,
+                                        attachment: AttachmentMessage,
                                         index: number
                                     ) => (
                                         <ImageListItem key={index}>

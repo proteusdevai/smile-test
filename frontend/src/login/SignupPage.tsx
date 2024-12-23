@@ -31,8 +31,7 @@ export const SignupPage = () => {
                 password: data.password,
                 redirectTo: '/patients/inbox',
             }).then(() => {
-                notify('Initial user successfully created');
-                // FIXME: We should probably provide a hook for that in the ra-core package
+                notify('Account successfully created');
                 queryClient.invalidateQueries({
                     queryKey: ['auth', 'canAccess'],
                 });

@@ -1,3 +1,6 @@
+import os
+import uuid
+
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
@@ -6,7 +9,7 @@ from django.db.models import Q
 
 
 class Dentists(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.TextField()
     last_name = models.TextField()
     email = models.TextField()
@@ -34,7 +37,7 @@ class Dentists(models.Model):
 
 
 class Patients(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.TextField(null=False, blank=False)
     first_name = models.TextField(null=False, blank=False)
     last_name = models.TextField(null=False, blank=False)
@@ -43,6 +46,7 @@ class Patients(models.Model):
     first_seen = models.DateTimeField(null=True, blank=True)
     last_seen = models.DateTimeField(null=True, blank=True)
     stage = models.TextField(null=False, blank=False)
+    category = models.TextField(null=True, blank=True)
     tags = ArrayField(models.BigIntegerField(), null=True, blank=True)
     dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE)
     user = models.OneToOneField(
@@ -78,14 +82,15 @@ class Messages(models.Model):
     patient = models.ForeignKey(Patients, on_delete=models.CASCADE)
     dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE)
     text = models.TextField(null=True, blank=True)
+    title = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField(auto_now_add=True)
-    attachments = ArrayField(models.JSONField(null=True, blank=True), null=True, blank=True)
 
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(text__isnull=False) | Q(attachments__isnull=False),
-                name="text_or_attachments",
+                check=Q(text__isnull=False),
+                name="text_required",
             ),
         ]
 
@@ -104,23 +109,9 @@ class Messages(models.Model):
 class ConsultNotes(models.Model):
     id = models.BigAutoField(primary_key=True)
     consult = models.ForeignKey(Consults, on_delete=models.CASCADE)
-    type = models.TextField(null=True, blank=True)
-    text = models.TextField(null=True, blank=True)
+    text = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     dentist = models.ForeignKey(Dentists, on_delete=models.SET_NULL, null=True, blank=True)
-    attachments = ArrayField(models.JSONField(null=True, blank=True), null=True, blank=True)
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=Q(text__isnull=False) | Q(attachments__isnull=False),
-                name="text_or_attachments",
-            ),
-        ]
-
-    def clean(self):
-        if not self.text and not self.attachments:
-            raise ValidationError("Message must have text or attachments.")
 
     def __str__(self):
         return f"ConsultNote {self.id} for Consult {self.consult_id}"
@@ -152,16 +143,20 @@ class Tasks(models.Model):
     def __str__(self):
         return f"Task {self.id} for Patient {self.patient_id}"
 
+
 class RAFile(models.Model):
+    id = models.BigAutoField(primary_key=True, default=uuid.uuid4, editable=False)
     file = models.FileField(upload_to='/uploads/')  # The actual file stored in the backend
-    title = models.CharField(max_length=255)       # The descriptive title of the file
-    src = models.URLField()   # URL for accessing the file
-    path = models.CharField(max_length=255)  # Storage path
-    type = models.CharField(max_length=50, blank=True, null=True)   # MIME type
+    title = models.CharField(max_length=255)  # The descriptive title of the file
+    path = models.CharField(max_length=255)
+    src = models.URLField()  # URL for accessing the file
+    type = models.CharField(max_length=50, blank=True, null=True)  # MIME type
+    message = models.ForeignKey('Messages', on_delete=models.CASCADE, related_name='files')
 
     def save(self, *args, **kwargs):
-        # Automatically set `src` and `path` based on the uploaded file
+        # Automatically set `src` and `title` based on the uploaded file
         if self.file:
-            self.path = self.file.name
+            self.title = os.path.splitext(self.file.name)[0]  # Get the file name without the extension
+            self.path = os.path.join(settings.MEDIA_ROOT, self.file.name)
             self.src = self.file.url
         super().save(*args, **kwargs)

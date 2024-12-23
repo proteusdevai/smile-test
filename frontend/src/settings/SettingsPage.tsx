@@ -7,67 +7,49 @@ import {
     CardContent,
     Container,
     Stack,
-    Tooltip,
     Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
     Form,
     Labeled,
     TextField,
     TextInput,
     useDataProvider,
-    useGetIdentity,
-    useGetOne,
     useNotify,
     useRecordContext,
+    useGetOne,
 } from 'react-admin';
 import { useFormState } from 'react-hook-form';
-import ImageEditorField from '../misc/ImageEditorField';
-import { AppDataProvider } from '../providers/types';
-import { Dentist, DentistFormData } from '../types';
 import { useMutation } from '@tanstack/react-query';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { AppDataProvider } from '../providers/django/dataProvider';
 
+// Main Settings Page Component
 export const SettingsPage = () => {
     const [isEditMode, setEditMode] = useState(false);
-    const { identity, refetch: refetchIdentity } = useGetIdentity();
-    const { data, refetch: refetchUser } = useGetOne('dentists', {
-        id: identity?.id,
-    });
     const notify = useNotify();
     const dataProvider = useDataProvider<AppDataProvider>();
 
-    const { mutate } = useMutation({
-        mutationKey: ['signup'],
-        mutationFn: async (data: DentistFormData) => {
-            if (!identity) {
-                throw new Error('Record not found');
-            }
-            return dataProvider.dentistsUpdate(identity.id, data);
-        },
-        onSuccess: () => {
-            refetchIdentity();
-            refetchUser();
-            setEditMode(false);
-            notify('Your profile has been updated');
-        },
-        onError: _ => {
-            notify('An error occurred. Please try again', {
-                type: 'error',
-            });
-        },
-    });
+    // Fetch the current user data using their ID
+    const { data: record, refetch } = useGetOne('users', { id: 'me' }); // Fetches the current user's data
 
-    if (!identity) return null;
-
+    // Handle form submission
     const handleOnSubmit = async (values: any) => {
-        mutate(values);
+        try {
+            await dataProvider.updateUser('me', values); // Call the updateUser function
+            notify('Your profile has been updated');
+            refetch(); // Refresh the user data
+            setEditMode(false);
+        } catch (error) {
+            notify('An error occurred. Please try again.', { type: 'error' });
+        }
     };
+
+    if (!record) return null; // Prevent rendering if record is undefined
 
     return (
         <Container maxWidth="sm" sx={{ mt: 4 }}>
-            <Form onSubmit={handleOnSubmit} record={data}>
+            <Form onSubmit={handleOnSubmit} record={record}>
                 <SettingsForm
                     isEditMode={isEditMode}
                     setEditMode={setEditMode}
@@ -77,6 +59,7 @@ export const SettingsPage = () => {
     );
 };
 
+// Settings Form Component
 const SettingsForm = ({
     isEditMode,
     setEditMode,
@@ -85,56 +68,36 @@ const SettingsForm = ({
     setEditMode: (value: boolean) => void;
 }) => {
     const notify = useNotify();
-    const record = useRecordContext<Dentist>();
-    const { identity, refetch } = useGetIdentity();
     const { isDirty } = useFormState();
+    const record = useRecordContext(); // Retrieves the record from the form context
     const dataProvider = useDataProvider<AppDataProvider>();
 
+    // Password update mutation
     const { mutate: updatePassword } = useMutation({
         mutationKey: ['updatePassword'],
-        mutationFn: async () => {
-            if (!identity) {
-                throw new Error('Record not found');
-            }
-            return dataProvider.updatePassword(identity.id, "Test");
+        mutationFn: async (newPassword: string) => {
+            // @ts-ignore
+            return dataProvider.updatePassword(record.id, newPassword);
         },
         onSuccess: () => {
-            notify(
-                'A reset password email has been sent to your email address'
-            );
+            notify('Your password has been updated.');
         },
         onError: e => {
-            notify(`${e}`, {
-                type: 'error',
-            });
+            notify(`An error occurred: ${e}`, { type: 'error' });
         },
     });
 
-    const { mutate: mutateSale } = useMutation({
-        mutationKey: ['signup'],
-        mutationFn: async (data: DentistFormData) => {
-            if (!record) {
-                throw new Error('Record not found');
-            }
-            return dataProvider.dentistsUpdate(record.id, data);
-        },
-        onSuccess: () => {
-            refetch();
-            notify('Your profile has been updated');
-        },
-        onError: () => {
-            notify('An error occurred. Please try again.');
-        },
-    });
-    if (!identity) return null;
-
-    const handleClickOpenPasswordChange = () => {
-        updatePassword();
+    // Handle password change
+    const handlePasswordChange = async () => {
+        const newPassword = prompt('Enter your new password:');
+        if (newPassword) {
+            updatePassword(newPassword);
+        } else {
+            notify('Password change canceled.', { type: 'info' });
+        }
     };
 
-    const handleAvatarUpdate = async (values: any) => {
-        mutateSale(values);
-    };
+    if (!record) return null; // Prevent rendering if record is undefined
 
     return (
         <Stack gap={4}>
@@ -146,16 +109,10 @@ const SettingsForm = ({
                         justifyContent="space-between"
                     >
                         <Typography variant="h5" color="textSecondary">
-                            My info
+                            My Info
                         </Typography>
                     </Stack>
                     <Stack gap={2} mb={2}>
-                        <ImageEditorField
-                            source="avatar"
-                            type="avatar"
-                            onSave={handleAvatarUpdate}
-                            linkPosition="right"
-                        />
                         <TextRender
                             source="first_name"
                             isEditMode={isEditMode}
@@ -167,14 +124,12 @@ const SettingsForm = ({
                         <TextRender source="email" isEditMode={isEditMode} />
                     </Stack>
                     {!isEditMode && (
-                        <>
-                            <Button
-                                variant="outlined"
-                                onClick={handleClickOpenPasswordChange}
-                            >
-                                Change password
-                            </Button>
-                        </>
+                        <Button
+                            variant="outlined"
+                            onClick={handlePasswordChange}
+                        >
+                            Change Password
+                        </Button>
                     )}
                 </CardContent>
 
@@ -192,7 +147,6 @@ const SettingsForm = ({
                             variant="contained"
                             type="submit"
                             disabled={!isDirty}
-                            hidden={isEditMode}
                         >
                             Save
                         </Button>
@@ -209,35 +163,14 @@ const SettingsForm = ({
                     </Button>
                 </CardActions>
             </Card>
-            {import.meta.env.VITE_INBOUND_EMAIL && (
-                <Card>
-                    <CardContent>
-                        <Stack gap={2} justifyContent="space-between">
-                            <Typography variant="h5" color="textSecondary">
-                                Inboud email
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                                You can start sending emails to your server's
-                                inbound email address, e.g. by adding it to the
-                                <b> Cc: </b> field. Atomic CRM will process the
-                                emails and add notes to the corresponding
-                                contacts.
-                            </Typography>
-                            <CopyPaste />
-                        </Stack>
-                    </CardContent>
-                </Card>
-            )}
         </Stack>
     );
 };
 
-const TextRender = ({
+// Text Render Component
+const TextRender: React.FC<{ source: string; isEditMode: boolean }> = ({
     source,
     isEditMode,
-}: {
-    source: string;
-    isEditMode: boolean;
 }) => {
     if (isEditMode) {
         return <TextInput source={source} helperText={false} />;
@@ -246,31 +179,6 @@ const TextRender = ({
         <Labeled sx={{ mb: 0 }}>
             <TextField source={source} />
         </Labeled>
-    );
-};
-
-const CopyPaste = () => {
-    const [copied, setCopied] = useState(false);
-    const handleCopy = () => {
-        setCopied(true);
-        navigator.clipboard.writeText(import.meta.env.VITE_INBOUND_EMAIL);
-        setTimeout(() => {
-            setCopied(false);
-        }, 1500);
-    };
-    return (
-        <Tooltip placement="top" title={copied ? 'Copied!' : 'Copy'}>
-            <Button
-                onClick={handleCopy}
-                sx={{
-                    textTransform: 'none',
-                    justifyContent: 'space-between',
-                }}
-                endIcon={<ContentCopyIcon />}
-            >
-                {import.meta.env.VITE_INBOUND_EMAIL}
-            </Button>
-        </Tooltip>
     );
 };
 

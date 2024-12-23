@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { CRM } from './CRM';
+import { PMS } from './PMS';
 import { dataProvider, authProvider } from '../providers/fakerest';
 
-const meta: Meta<typeof CRM> = {
-    component: CRM,
+const meta: Meta<typeof PMS> = {
+    component: PMS,
 };
 
 export default meta;
-type Story = StoryObj<typeof CRM>;
+type Story = StoryObj<typeof PMS>;
 
 export const Basic: Story = {
     args: {

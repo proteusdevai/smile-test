@@ -5,15 +5,20 @@ from rest_framework_simplejwt.views import (
 )
 
 from smileapp.urls import router
-from smileapp.views import SignupView, UpdatePasswordView, UnarchiveConsultView, RAFileView
+from smileapp.views import PatientSignUpView, UpdatePasswordView, UnarchiveConsultView, RAFileView, ResetPasswordView
+from smileapp.views.health_check import HealthCheckView
+from smileapp.views.user_views import UpdateUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/patient-signup', SignupView.as_view(), name='patient-signup'),
-    path('api/patients/<int:pk>/update_password', UpdatePasswordView.as_view(), name='update-password-signup'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/patient-signup/', PatientSignUpView.as_view(), name='patient-signup'),
+    path('api/patients/<int:pk>/update_password/', UpdatePasswordView.as_view(), name='update-password-signup'),
     path('api/consults/unarchive/', UnarchiveConsultView.as_view(), name='unarchive_consult'),
-    path('api/upload/', RAFileView.as_view(), name='file_upload')
+    path('api/upload/', RAFileView.as_view(), name='file_upload'),
+    path('api/health-check/', HealthCheckView.as_view(), name='health-check'),
+    path('api/reset-password/', ResetPasswordView.as_view(), name='reset-password'),
+    path('api/update-user/', UpdateUserView.as_view(), name='update-user'),
 ]

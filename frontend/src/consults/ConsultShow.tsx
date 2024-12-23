@@ -28,7 +28,7 @@ import {
 import ArchiveIcon from '@mui/icons-material/Archive';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { DialogCloseButton } from '../misc/DialogCloseButton';
-import { NotesIterator } from '.././messages';
+import { MessagesIterator } from '.././messages';
 import { useConfigurationContext } from '../root/ConfigurationContext';
 import { Consult } from '../types';
 import { PatientList } from './PatientList';
@@ -240,7 +240,7 @@ const ConsultShowContent = ({ handleClose }: { handleClose: () => void }) => {
                                 reference="consultNotes"
                                 sort={{ field: 'date', order: 'DESC' }}
                             >
-                                <NotesIterator reference="consults" />
+                                <MessagesIterator reference="consults" />
                             </ReferenceManyField>
                         </Box>
                     </Box>

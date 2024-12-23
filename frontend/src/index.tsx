@@ -5,8 +5,8 @@ import sales from './sales';
 
 export { ForgotPasswordPage, SetPasswordPage } from 'ra-supabase';
 
-export { CRM } from './root/CRM';
-export type { CRMProps } from './root/CRM';
+export { PMS } from './root/PMS';
+export type { CRMProps } from './root/PMS';
 export { i18nProvider } from './root/i18nProvider';
 export { Layout } from './layout/Layout';
 export { Dashboard } from './dashboard/Dashboard';

@@ -52,6 +52,18 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         getPermissions: () => {
             return Promise.resolve();
         },
+        getIdentity: async () => {
+            const response = await fetch('/api/users/', {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+            if (!response.ok) {
+                return Promise.reject(new Error('Unable to fetch identity')); // Proper Error object
+            }
+            const { id, first_name, last_name, email } = await response.json();
+            return { id, first_name, last_name, email }; // Identity object
+        },
     };
 }
 

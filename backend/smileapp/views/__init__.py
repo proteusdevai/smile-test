@@ -1,18 +1,22 @@
 from .consults import ConsultNotesViewSet, ConsultsViewSet, UnarchiveConsultView
 from .dentists import DentistsViewSet
-from .messages import MessagesViewSet, FileUploadView
-from .patients import PatientsViewSet, SignupView, UpdatePasswordView
+from .health_check import HealthCheckView
+from .messages import MessagesViewSet
+from .patients import PatientsViewSet, PatientSignUpView, UpdatePasswordView
 from .tags import TagsViewSet
 from .tasks import TasksViewSet
 from .rafile import RAFileView
+from .user_views import ResetPasswordView
 
 __all__ = [
-    "PatientsViewSet", "SignupView",
+    "PatientsViewSet", "PatientSignUpView",
     "DentistsViewSet",
     "TagsViewSet",
     "ConsultNotesViewSet", "ConsultsViewSet", "UnarchiveConsultView",
     "TasksViewSet",
-    "MessagesViewSet", "FileUploadView",
+    "MessagesViewSet",
     "UpdatePasswordView",
-    "RAFileView"
+    "RAFileView",
+    "HealthCheckView",
+    "ResetPasswordView",
 ]

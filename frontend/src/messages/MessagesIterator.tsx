@@ -3,20 +3,20 @@ import { Box, Divider, Stack } from '@mui/material';
 import { useListContext } from 'react-admin';
 
 import { Message } from './Message';
-import { NoteCreate } from './NoteCreate';
+import { MessageCreate } from './MessageCreate';
 
-export const NotesIterator = ({
+export const MessagesIterator = ({
     showStatus,
     reference,
 }: {
     showStatus?: boolean;
-    reference: 'patients' | 'consults';
+    reference: 'patients' | 'dentists';
 }) => {
     const { data, error, isPending } = useListContext();
     if (isPending || error) return null;
     return (
         <Box mt={2}>
-            <NoteCreate showStatus={showStatus} reference={reference} />
+            <MessageCreate showStatus={showStatus} reference={reference} />
             {data && (
                 <Stack mt={2} gap={1}>
                     {data.map((note, index) => (
@@ -24,7 +24,6 @@ export const NotesIterator = ({
                             <Message
                                 note={note}
                                 isLast={index === data.length - 1}
-                                showStatus={showStatus}
                                 key={index}
                             />
                             {index < data.length - 1 && <Divider />}

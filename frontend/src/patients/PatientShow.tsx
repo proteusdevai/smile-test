@@ -9,7 +9,7 @@ import {
 import { Box, Card, CardContent, Typography } from '@mui/material';
 
 import { PatientAside } from './PatientAside';
-import { NotesIterator } from '.././messages';
+import { MessagesIterator } from '.././messages';
 import { Patient } from '../types';
 
 export const PatientShow = () => (
@@ -37,7 +37,7 @@ const ContactShowContent = () => {
                             reference="contactNotes"
                             sort={{ field: 'date', order: 'DESC' }}
                         >
-                            <NotesIterator showStatus reference="contacts" />
+                            <MessagesIterator showStatus reference="contacts" />
                         </ReferenceManyField>
                     </CardContent>
                 </Card>

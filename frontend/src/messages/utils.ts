@@ -5,7 +5,7 @@ export const getCurrentDate = () => {
     return now.toISOString();
 };
 
-export const formatNoteDate = (dateString: string) => {
+export const formatMessageDate = (dateString: string) => {
     const date = new Date(dateString);
     date.setSeconds(0);
     date.setMilliseconds(0);

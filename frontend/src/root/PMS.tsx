@@ -38,7 +38,7 @@ import {
     defaultTitle,
 } from './defaultConfiguration';
 
-// Define the interface for the CRM component props
+// Define the interface for the PMS component props
 export type CRMProps = {
     dataProvider?: DataProvider;
     authProvider?: AuthProvider;
@@ -70,9 +70,9 @@ const defaultLightTheme = deepmerge(defaultTheme, {
 });
 
 /**
- * CRM Component
+ * PMS Component
  *
- * This component sets up and renders the main CRM application using `react-admin`. It provides
+ * This component sets up and renders the main PMS application using `react-admin`. It provides
  * default configurations and themes but allows for customization through props. The component
  * wraps the application with a `ConfigurationProvider` to provide configuration values via context.
  *
@@ -83,21 +83,21 @@ const defaultLightTheme = deepmerge(defaultTheme, {
  * @param {string[]} dealPipelineStatuses - The statuses of deals in the pipeline used in the application.
  * @param {DealStage[]} dealStages - The stages of deals used in the application.
  * @param {RaThemeOptions} lightTheme - The theme to use when the application is in light mode.
- * @param {string} logo - The logo used in the CRM application.
+ * @param {string} logo - The logo used in the PMS application.
  * @param {NoteStatus[]} noteStatuses - The statuses of messages used in the application.
  * @param {string[]} taskTypes - The types of tasks used in the application.
- * @param {string} title - The title of the CRM application.
+ * @param {string} title - The title of the PMS application.
  *
- * @returns {JSX.Element} The rendered CRM application.
+ * @returns {JSX.Element} The rendered PMS application.
  *
  * @example
- * // Basic usage of the CRM component
- * import { CRM } from './CRM';
+ * // Basic usage of the PMS component
+ * import { PMS } from './PMS';
  *
  * const App = () => (
- *     <CRM
+ *     <PMS
  *         logo="/path/to/logo.png"
- *         title="My Custom CRM"
+ *         title="My Custom PMS"
  *         lightTheme={{
  *             ...defaultTheme,
  *             palette: {
@@ -109,7 +109,7 @@ const defaultLightTheme = deepmerge(defaultTheme, {
  *
  * export default App;
  */
-export const CRM = ({
+export const PMS = ({
     darkTheme,
     consultCategories = defaultConsultCategories,
     consultPipelineStatuses = defaultConsultPipelineStatuses,
@@ -133,7 +133,7 @@ export const CRM = ({
         <Admin
             dataProvider={dataProvider}
             authProvider={authProvider}
-            store={localStorageStore(undefined, 'CRM')}
+            store={localStorageStore(undefined, 'PMS')}
             layout={Layout}
             loginPage={LoginPage}
             dashboard={Dashboard}

@@ -37,15 +37,6 @@ class ConsultsSerializer(serializers.ModelSerializer):
         ]
 
 
-class MessagesSerializer(serializers.ModelSerializer):
-    patient_name = serializers.CharField(source='patient.first_name', read_only=True)
-    dentist_name = serializers.CharField(source='dentist.first_name', read_only=True)
-
-    class Meta:
-        model = Messages
-        fields = ['id', 'patient_name', 'dentist_name', 'text', 'date', 'attachments']
-
-
 class ConsultNotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConsultNotes
@@ -76,7 +67,7 @@ class PatientsSignupSerializer(serializers.Serializer):
     last_name = serializers.CharField(max_length=255)
     phone_number = serializers.CharField(max_length=15, required=False, allow_blank=True)
     smile_goals = serializers.CharField(max_length=500)
-    dentist_id = serializers.IntegerField()  # Foreign key to the dentist
+    dentist_id = serializers.UUIDField()  # Foreign key to the dentist
 
     def validate_email(self, value):
         """
@@ -92,3 +83,10 @@ class RAFileSerializer(serializers.ModelSerializer):
         model = RAFile
         fields = ['id', 'file', 'title', 'src', 'path', 'type']  # Include all metadata fields
         read_only_fields = ['src', 'path']  # These fields will be auto-calculated
+
+class MessagesSerializer(serializers.ModelSerializer):
+    attachements = RAFileSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Messages
+        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'attachments']

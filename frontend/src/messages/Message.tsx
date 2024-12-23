@@ -27,8 +27,8 @@ import { RelativeDate } from '../misc/RelativeDate';
 import { Status } from '../misc/Status';
 import { SaleName } from '../sales/SaleName';
 import { ContactNote, DealNote } from '../types';
-import { NoteAttachments } from './NoteAttachments';
-import { NoteInputs } from './NoteInputs';
+import { MessageAttachments } from './MessageAttachments';
+import { MessageInputs } from './MessageInputs';
 
 export const Message = ({
     showStatus,
@@ -149,7 +149,7 @@ export const Message = ({
             </Stack>
             {isEditing ? (
                 <Form onSubmit={handleNoteUpdate} record={note}>
-                    <NoteInputs showStatus={showStatus} edition />
+                    <MessageInputs showStatus={showStatus} edition />
                     <Box display="flex" justifyContent="flex-start" mt={1}>
                         <Button
                             type="submit"
@@ -193,7 +193,7 @@ export const Message = ({
                             </Typography>
                         ))}
 
-                    {note.attachments && <NoteAttachments note={note} />}
+                    {note.attachments && <MessageAttachments note={note} />}
                 </Stack>
             )}
         </Box>

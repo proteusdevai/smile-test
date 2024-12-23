@@ -14,20 +14,20 @@ import {
 import { useFormContext } from 'react-hook-form';
 
 import { Stack } from '@mui/material';
-import { NoteInputs } from './NoteInputs';
+import { MessageInputs } from './MessageInputs';
 import { getCurrentDate } from './utils';
 
 const foreignKeyMapping = {
-    contacts: 'contact_id',
-    deals: 'deal_id',
+    patient: 'patient_id',
+    dentits: 'dentist_id',
 };
 
-export const NoteCreate = ({
+export const MessageCreate = ({
     showStatus,
     reference,
 }: {
     showStatus?: boolean;
-    reference: 'contacts' | 'deals';
+    reference: 'patients | dentists';
 }) => {
     const resource = useResourceContext();
     const record = useRecordContext();
@@ -37,20 +37,23 @@ export const NoteCreate = ({
     return (
         <CreateBase resource={resource} redirect={false}>
             <Form>
-                <NoteInputs showStatus={showStatus} />
+                <MessageInputs showStatus={showStatus} />
                 <Stack direction="row">
-                    <NoteCreateButton reference={reference} record={record} />
+                    <MessageCreateButton
+                        reference={reference}
+                        record={record}
+                    />
                 </Stack>
             </Form>
         </CreateBase>
     );
 };
 
-const NoteCreateButton = ({
+const MessageCreateButton = ({
     reference,
     record,
 }: {
-    reference: 'contacts' | 'deals';
+    reference: 'patients' | 'dentists';
     record: RaRecord<Identifier>;
 }) => {
     const [update] = useUpdate();
@@ -65,23 +68,18 @@ const NoteCreateButton = ({
         date: string;
         text: null;
         attachments: null;
-        status?: string;
     } = {
         date: getCurrentDate(),
         text: null,
         attachments: null,
     };
 
-    if (reference === 'contacts') {
-        resetValues.status = 'warm';
-    }
-
     const handleSuccess = (data: any) => {
         reset(resetValues, { keepValues: false });
         refetch();
         update(reference, {
             id: (record && record.id) as unknown as Identifier,
-            data: { last_seen: new Date().toISOString(), status: data.status },
+            data: { last_seen: new Date().toISOString() },
             previousData: record,
         });
         notify('Nessage Sent');
@@ -94,7 +92,8 @@ const NoteCreateButton = ({
             transform={data => ({
                 ...data,
                 [foreignKeyMapping[reference]]: record.id,
-                sales_id: identity.id,
+                dentist_id: record.patient_id,
+                patient_id: record.dentist_id,
                 date: data.date || getCurrentDate(),
             })}
             mutationOptions={{

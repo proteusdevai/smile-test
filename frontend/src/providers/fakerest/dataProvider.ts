@@ -8,11 +8,10 @@ import {
     withLifecycleCallbacks,
 } from 'react-admin';
 import {
-    Company,
-    Contact,
-    Deal,
-    Sale,
-    SalesFormData,
+    Patient,
+    Consult,
+    Dentist,
+    DentistFormData,
     SignUpData,
     Task,
 } from '../../types';
