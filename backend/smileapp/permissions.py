@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
 
-from models import Dentists, Patients
+from .models import Dentists, Patients
 
 
 class IsDentist(BasePermission):

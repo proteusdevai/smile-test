@@ -1,7 +1,6 @@
-import companies from './companies';
-import contacts from './contacts';
-import deals from './deals';
-import sales from './sales';
+import patients from './patients';
+import consults from './consults';
+import dentists from './dentists';
 
 export { ForgotPasswordPage, SetPasswordPage } from 'ra-supabase';
 
@@ -14,4 +13,4 @@ export { LoginPage } from './login/LoginPage';
 export { SignupPage } from './login/SignupPage';
 export { SettingsPage } from './settings/SettingsPage';
 
-export { companies, contacts, deals, sales };
+export { patients, consults, dentists };

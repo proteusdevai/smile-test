@@ -3,14 +3,14 @@ import { CreateBase, Form, Toolbar, useGetIdentity } from 'react-admin';
 import { Card, CardContent, Box } from '@mui/material';
 
 import { PatientInputs } from './PatientInputs';
-import { Contact } from '../types';
+import { Patient } from '../types';
 
 export const PatientCreate = () => {
     const { identity } = useGetIdentity();
     return (
         <CreateBase
             redirect="show"
-            transform={(data: Contact) => ({
+            transform={(data: Patient) => ({
                 ...data,
                 first_seen: new Date().toISOString(),
                 last_seen: new Date().toISOString(),

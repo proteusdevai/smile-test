@@ -5,7 +5,7 @@ import drfProvider, {
 import {
     DataProvider,
     GetListParams,
-    Identifier,
+    Identifier, UserIdentity,
     withLifecycleCallbacks,
 } from 'react-admin';
 import {
@@ -175,8 +175,8 @@ const dataProviderWithCustomMethods = {
             throw error; // Rethrow the error for higher-level handling
         }
     },
-    async getActivityLog(companyId?: Identifier) {
-        return getActivityLog(baseDataProvider, companyId);
+    async getActivityLog(identity: UserIdentity) {
+        return getActivityLog(baseDataProvider, identity);
     },
 } satisfies DataProvider;
 

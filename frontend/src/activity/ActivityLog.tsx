@@ -1,8 +1,8 @@
 import { Alert, Divider, Skeleton, Stack } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
-import { Identifier, useDataProvider } from 'react-admin';
+import { Identifier, useDataProvider, useGetIdentity } from 'react-admin';
 
-import { DataProvider } from '../providers/types';
+import { AppDataProvider } from '../providers/types';
 import { ActivityLogContext } from './ActivityLogContext';
 import { ActivityLogIterator } from './ActivityLogIterator';
 
@@ -17,10 +17,16 @@ export function ActivityLog({
     pageSize = 20,
     context = 'all',
 }: ActivityLogProps) {
-    const dataProvider = DataProvider;
+    const { identity } = useGetIdentity();
+    const dataProvider = useDataProvider<AppDataProvider>();
     const { data, isPending, error } = useQuery({
         queryKey: ['activityLog', patientId],
-        queryFn: () => dataProvider.getActivityLog(patientId),
+        queryFn: () => {
+            if (!identity) {
+                throw new Error('User is not authenticated');
+            }
+            return dataProvider.getActivityLog(identity);
+        },
     });
 
     if (isPending) {

@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useContext } from 'react';
 import {
     defaultConsultCategories,
-    defaultConsultPipelineStatuses,
     defaultStages,
     defaultLogo,
     defaultTaskTypes,
@@ -12,7 +11,6 @@ import { Stage } from '../types';
 // Define types for the context value
 export interface ConfigurationContextValue {
     consultCategories: string[];
-    consultPipelineStatuses: string[];
     stages: Stage[];
     taskTypes: string[];
     title: string;
@@ -26,7 +24,6 @@ export interface ConfigurationProviderProps extends ConfigurationContextValue {
 // Create context with default value
 export const ConfigurationContext = createContext<ConfigurationContextValue>({
     consultCategories: defaultConsultCategories,
-    consultPipelineStatuses: defaultConsultPipelineStatuses,
     stages: defaultStages,
     taskTypes: defaultTaskTypes,
     title: defaultTitle,
@@ -36,7 +33,6 @@ export const ConfigurationContext = createContext<ConfigurationContextValue>({
 export const ConfigurationProvider = ({
     children,
     consultCategories,
-    consultPipelineStatuses,
     stages,
     logo,
     taskTypes,
@@ -45,7 +41,6 @@ export const ConfigurationProvider = ({
     <ConfigurationContext.Provider
         value={{
             consultCategories,
-            consultPipelineStatuses,
             stages,
             logo,
             title,

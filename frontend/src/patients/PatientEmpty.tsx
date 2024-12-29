@@ -1,7 +1,6 @@
 import { Stack, Typography } from '@mui/material';
 import { CreateButton } from 'react-admin';
 import useAppBarHeight from '../misc/useAppBarHeight';
-import { ContactImportButton } from './ContactImportButton';
 
 export const PatientEmpty = () => {
     const appbarHeight = useAppBarHeight();
@@ -25,12 +24,8 @@ export const PatientEmpty = () => {
                     color="text.secondary"
                     gutterBottom
                 >
-                    It seems your contact list is empty.
+                    It seems your patient list is empty.
                 </Typography>
-            </Stack>
-            <Stack spacing={2} direction="row">
-                <CreateButton variant="contained" label="New Contact" />
-                <ContactImportButton />
             </Stack>
         </Stack>
     );

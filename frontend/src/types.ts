@@ -13,7 +13,7 @@ export type SignUpData = {
     last_name: string;
     smile_goals: string;
     phone_number?: string;
-    attachments?: AttachmentNote[];
+    attachments?: AttachmentMessage[];
     dentist_id: Identifier;
 };
 
@@ -55,9 +55,12 @@ export type Message = {
     id: number;
     patient_id: Identifier;
     dentist_id: Identifier;
-    text?: string;
-    date: string;
-    attachments?: AttachmentNote[];
+    sender_id: Identifier;
+    sender_type: string;
+    text: string;
+    title: string;
+    created_at: string;
+    attachments?: AttachmentMessage[];
 } & Pick<RaRecord, 'id'>;
 
 export type Consult = {
@@ -68,6 +71,7 @@ export type Consult = {
     category: string;
     description: string;
     amount: number;
+    stage: string;
     created_at: string;
     updated_at: string;
     archived_at?: string;
@@ -116,28 +120,7 @@ export type ActivityMessageCreated = {
     date: string;
 };
 
-export type ActivityConsultCreated = {
-    type: typeof CONSULT_CREATED;
-    patient_id: Identifier;
-    dentist_id: Identifier;
-    consult: Consult;
-    date: string;
-};
-
-export type ActivityConsultNoteCreated = {
-    type: typeof CONSULT_NOTE_CREATED;
-    consult_id: number;
-    consultNote: ConsultNote;
-    date: string;
-};
-
-export type Activity = RaRecord &
-    (
-        | ActivityPatientCreated
-        | ActivityMessageCreated
-        | ActivityConsultCreated
-        | ActivityConsultNoteCreated
-    );
+export type Activity = RaRecord & ActivityMessageCreated;
 
 export interface RAFile {
     src: string;

@@ -16,7 +16,6 @@
         "@mui/material": "^5.15.6",
         "@nivo/bar": "^0.87.0",
         "@nivo/core": "^0.87.0",
-        "@supabase/supabase-js": "^2.39.3",
         "@types/jsonexport": "^3.0.5",
         "clsx": "^2.1.0",
         "date-fns": "^3.3.1",
@@ -93,7 +92,6 @@
         "prettier:apply": "prettier --config ./.prettierrc.mjs --write --list-different \"**/*.{js,json,ts,tsx,css,md,html}\"",
         "prettier:check": "prettier --config ./.prettierrc.mjs --check \"**/*.{js,json,ts,tsx,css,md,html}\"",
         "ghpages:deploy": "node ./scripts/ghpages-deploy.mjs",
-        "supabase:remote:init": "node ./scripts/supabase-remote-init.mjs",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build"
     }

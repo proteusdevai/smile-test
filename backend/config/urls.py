@@ -3,11 +3,17 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView, TokenRefreshView
 )
+from django.http import HttpResponse
+
 
 from smileapp.urls import router
 from smileapp.views import PatientSignUpView, UpdatePasswordView, UnarchiveConsultView, RAFileView, ResetPasswordView
 from smileapp.views.health_check import HealthCheckView
 from smileapp.views.user_views import UpdateUserView
+
+
+def home_view(request):
+    return HttpResponse("Welcome to the Smile App!")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -21,4 +27,5 @@ urlpatterns = [
     path('api/health-check/', HealthCheckView.as_view(), name='health-check'),
     path('api/reset-password/', ResetPasswordView.as_view(), name='reset-password'),
     path('api/update-user/', UpdateUserView.as_view(), name='update-user'),
+path('', home_view),  # Add this line
 ]

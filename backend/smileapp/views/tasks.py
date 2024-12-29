@@ -5,7 +5,7 @@ from smileapp.models import Tasks
 from smileapp.serializers import TasksSerializer
 from smileapp.filters import  TasksFilter
 from smileapp.permissions import IsDentist, IsOwnerDentistOfResource
-from utils import get_user_dentist
+from .utils import get_user_dentist
 
 
 

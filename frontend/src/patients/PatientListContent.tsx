@@ -21,18 +21,16 @@ import {
 } from 'react-admin';
 import { Link } from 'react-router-dom';
 
-import { Status } from '../misc/Status';
-import { Contact } from '../types';
-import { TagsList } from './TagsList';
+import { Patient } from '../types';
 
 export const PatientListContent = () => {
     const {
-        data: contacts,
+        data: patients,
         error,
         isPending,
         onToggleItem,
         selectedIds,
-    } = useListContext<Contact>();
+    } = useListContext<Patient>();
     const isSmall = useMediaQuery((theme: Theme) =>
         theme.breakpoints.down('md')
     );
@@ -47,58 +45,29 @@ export const PatientListContent = () => {
     return (
         <>
             <List dense>
-                {contacts.map(contact => (
-                    <RecordContextProvider key={contact.id} value={contact}>
+                {patients.map(patient => (
+                    <RecordContextProvider key={patient.id} value={patient}>
                         <ListItem
                             button
                             component={Link}
-                            to={`/contacts/${contact.id}/show`}
+                            to={`/patients/${patient.id}/show`}
                         >
                             <ListItemIcon sx={{ minWidth: '2.5em' }}>
                                 <Checkbox
                                     edge="start"
-                                    checked={selectedIds.includes(contact.id)}
+                                    checked={selectedIds.includes(patient.id)}
                                     tabIndex={-1}
                                     disableRipple
                                     onClick={e => {
                                         e.stopPropagation();
-                                        onToggleItem(contact.id);
+                                        onToggleItem(patient.id);
                                     }}
                                 />
                             </ListItemIcon>
-                            <ListItemAvatar>
-                                <Avatar />
-                            </ListItemAvatar>
                             <ListItemText
-                                primary={`${contact.first_name} ${contact.last_name ?? ''}`}
-                                secondary={
-                                    <>
-                                        {contact.title}
-                                        {contact.title &&
-                                            contact.company_id != null &&
-                                            ' at '}
-                                        {contact.company_id != null && (
-                                            <ReferenceField
-                                                source="company_id"
-                                                reference="companies"
-                                                link={false}
-                                            >
-                                                <TextField source="name" />
-                                            </ReferenceField>
-                                        )}
-                                        {contact.nb_tasks
-                                            ? ` - ${contact.nb_tasks} task${
-                                                  contact.nb_tasks > 1
-                                                      ? 's'
-                                                      : ''
-                                              }`
-                                            : ''}
-                                        &nbsp;&nbsp;
-                                        <TagsList />
-                                    </>
-                                }
+                                primary={`${patient.first_name} ${patient.last_name ?? ''}`}
                             />
-                            {contact.last_seen && (
+                            {patient.last_seen && (
                                 <ListItemSecondaryAction
                                     sx={{
                                         top: '10px',
@@ -108,14 +77,13 @@ export const PatientListContent = () => {
                                     <Typography
                                         variant="body2"
                                         color="textSecondary"
-                                        title={contact.last_seen}
+                                        title={patient.last_seen}
                                     >
                                         {!isSmall && 'last activity '}
                                         {formatRelative(
-                                            contact.last_seen,
+                                            patient.last_seen,
                                             now
                                         )}{' '}
-                                        <Status status={contact.status} />
                                     </Typography>
                                 </ListItemSecondaryAction>
                             )}
@@ -123,9 +91,9 @@ export const PatientListContent = () => {
                     </RecordContextProvider>
                 ))}
 
-                {contacts.length === 0 && (
+                {patients.length === 0 && (
                     <ListItem>
-                        <ListItemText primary="No contacts found" />
+                        <ListItemText primary="No patients found" />
                     </ListItem>
                 )}
             </List>

@@ -17,45 +17,26 @@ import { Stack } from '@mui/material';
 import { MessageInputs } from './MessageInputs';
 import { getCurrentDate } from './utils';
 
-const foreignKeyMapping = {
-    patient: 'patient_id',
-    dentits: 'dentist_id',
-};
-
-export const MessageCreate = ({
-    showStatus,
-    reference,
-}: {
-    showStatus?: boolean;
-    reference: 'patients | dentists';
-}) => {
-    const resource = useResourceContext();
-    const record = useRecordContext();
-    const { identity } = useGetIdentity();
+export const MessageCreate = ({ showStatus }: { showStatus?: boolean }) => {
+    const resource = useResourceContext(); // Current resource context
+    const record = useRecordContext(); // The receiver's record
+    const { identity } = useGetIdentity(); // The logged-in user's identity
 
     if (!record || !identity) return null;
+
     return (
         <CreateBase resource={resource} redirect={false}>
             <Form>
                 <MessageInputs showStatus={showStatus} />
                 <Stack direction="row">
-                    <MessageCreateButton
-                        reference={reference}
-                        record={record}
-                    />
+                    <MessageCreateButton record={record} />
                 </Stack>
             </Form>
         </CreateBase>
     );
 };
 
-const MessageCreateButton = ({
-    reference,
-    record,
-}: {
-    reference: 'patients' | 'dentists';
-    record: RaRecord<Identifier>;
-}) => {
+const MessageCreateButton = ({ record }: { record: RaRecord<Identifier> }) => {
     const [update] = useUpdate();
     const notify = useNotify();
     const { identity } = useGetIdentity();
@@ -64,38 +45,35 @@ const MessageCreateButton = ({
 
     if (!record || !identity) return null;
 
-    const resetValues: {
-        date: string;
-        text: null;
-        attachments: null;
-    } = {
-        date: getCurrentDate(),
+    const resetValues = {
+        created_at: getCurrentDate(),
         text: null,
         attachments: null,
     };
 
-    const handleSuccess = (data: any) => {
+    const handleSuccess = () => {
         reset(resetValues, { keepValues: false });
         refetch();
-        update(reference, {
-            id: (record && record.id) as unknown as Identifier,
-            data: { last_seen: new Date().toISOString() },
-            previousData: record,
-        });
-        notify('Nessage Sent');
+        notify('Message Sent');
     };
+
     return (
         <SaveButton
             type="button"
             label="Send Message"
             variant="contained"
-            transform={data => ({
-                ...data,
-                [foreignKeyMapping[reference]]: record.id,
-                dentist_id: record.patient_id,
-                patient_id: record.dentist_id,
-                date: data.date || getCurrentDate(),
-            })}
+            transform={data => {
+                const isPatientSender = identity.role === 'patient';
+
+                return {
+                    ...data,
+                    patient: isPatientSender ? identity.id : record.patient_id,
+                    dentist: isPatientSender ? record.dentist_id : identity.id,
+                    sender_id: identity.id,
+                    sender_type: isPatientSender ? 'patient' : 'dentist',
+                    created_at: data.created_at || getCurrentDate(),
+                };
+            }}
             mutationOptions={{
                 onSuccess: handleSuccess,
             }}

@@ -31,7 +31,6 @@ import {
 } from './ConfigurationContext';
 import {
     defaultConsultCategories,
-    defaultConsultPipelineStatuses,
     defaultStages,
     defaultLogo,
     defaultTaskTypes,
@@ -39,7 +38,7 @@ import {
 } from './defaultConfiguration';
 
 // Define the interface for the PMS component props
-export type CRMProps = {
+export type PMSProps = {
     dataProvider?: DataProvider;
     authProvider?: AuthProvider;
     lightTheme?: RaThemeOptions;
@@ -69,50 +68,9 @@ const defaultLightTheme = deepmerge(defaultTheme, {
     },
 });
 
-/**
- * PMS Component
- *
- * This component sets up and renders the main PMS application using `react-admin`. It provides
- * default configurations and themes but allows for customization through props. The component
- * wraps the application with a `ConfigurationProvider` to provide configuration values via context.
- *
- * @param {Array<ContactGender>} contactGender - The gender options for contacts used in the application.
- * @param {string[]} companySectors - The list of company sectors used in the application.
- * @param {RaThemeOptions} darkTheme - The theme to use when the application is in dark mode.
- * @param {string[]} dealCategories - The categories of deals used in the application.
- * @param {string[]} dealPipelineStatuses - The statuses of deals in the pipeline used in the application.
- * @param {DealStage[]} dealStages - The stages of deals used in the application.
- * @param {RaThemeOptions} lightTheme - The theme to use when the application is in light mode.
- * @param {string} logo - The logo used in the PMS application.
- * @param {NoteStatus[]} noteStatuses - The statuses of messages used in the application.
- * @param {string[]} taskTypes - The types of tasks used in the application.
- * @param {string} title - The title of the PMS application.
- *
- * @returns {JSX.Element} The rendered PMS application.
- *
- * @example
- * // Basic usage of the PMS component
- * import { PMS } from './PMS';
- *
- * const App = () => (
- *     <PMS
- *         logo="/path/to/logo.png"
- *         title="My Custom PMS"
- *         lightTheme={{
- *             ...defaultTheme,
- *             palette: {
- *                 primary: { main: '#0000ff' },
- *             },
- *         }}
- *     />
- * );
- *
- * export default App;
- */
 export const PMS = ({
     darkTheme,
     consultCategories = defaultConsultCategories,
-    consultPipelineStatuses = defaultConsultPipelineStatuses,
     stages = defaultStages,
     lightTheme = defaultLightTheme,
     logo = defaultLogo,
@@ -121,10 +79,9 @@ export const PMS = ({
     dataProvider = defaultDataProvider,
     authProvider = defaultAuthProvider,
     ...rest
-}: CRMProps) => (
+}: PMSProps) => (
     <ConfigurationProvider
         consultCategories={consultCategories}
-        consultPipelineStatuses={consultPipelineStatuses}
         stages={stages}
         logo={logo}
         taskTypes={taskTypes}
@@ -160,7 +117,6 @@ export const PMS = ({
             </CustomRoutes>
             <Resource name="consults" {...consults} />
             <Resource name="patients" {...patients} />
-            <Resource name="patientMessages" />
             <Resource name="consultNotes" />
             <Resource name="tasks" list={ListGuesser} />
             <Resource name="dentists" {...dentists} />

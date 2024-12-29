@@ -9,7 +9,6 @@ import {
 import { Activity } from '../types';
 import { ActivityLogPatientCreated } from './ActivityLogPatientCreated';
 import { ActivityLogMessageCreated } from './ActivityLogMessageCreated';
-import { ActivityLogConsultCreated } from './ActivityLogDealCreated';
 import { ActivityLogConsultNoteCreated } from './ActivityLogConsultNoteCreated';
 
 type ActivityLogIteratorProps = {

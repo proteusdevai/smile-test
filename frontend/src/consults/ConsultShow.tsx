@@ -235,13 +235,6 @@ const ConsultShowContent = ({ handleClose }: { handleClose: () => void }) => {
 
                         <Box m={2}>
                             <Divider />
-                            <ReferenceManyField
-                                target="consult_id"
-                                reference="consultNotes"
-                                sort={{ field: 'date', order: 'DESC' }}
-                            >
-                                <MessagesIterator reference="consults" />
-                            </ReferenceManyField>
                         </Box>
                     </Box>
                 </Box>

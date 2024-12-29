@@ -13,7 +13,7 @@ from smileapp.filters import PatientsFilter
 from smileapp.models import Patients, Dentists
 from smileapp.permissions import IsDentist, IsOwnerDentistOfResource
 from smileapp.serializers import PatientsSerializer, PatientsSignupSerializer
-from utils import get_user_dentist
+from .utils import get_user_dentist
 
 
 class PatientsViewSet(viewsets.ModelViewSet):

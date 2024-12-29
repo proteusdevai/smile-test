@@ -18,14 +18,13 @@ import {
 } from 'react-admin';
 import { AddTask } from '../tasks/AddTask';
 import { TasksIterator } from '../tasks/TasksIterator';
-import { TagsListEdit } from './TagsListEdit';
 
 import { useLocation } from 'react-router';
 import { useConfigurationContext } from '../root/ConfigurationContext';
-import { Contact, Sale } from '../types';
+import { Patient, Dentist } from '../types';
 
 export const PatientAside = ({ link = 'edit' }: { link?: 'edit' | 'show' }) => {
-    const record = useRecordContext<Contact>();
+    const record = useRecordContext<Patient>();
     if (!record) return null;
     return (
         <Box ml={4} width={250} minWidth={250}>
@@ -50,52 +49,28 @@ export const PatientAside = ({ link = 'edit' }: { link?: 'edit' | 'show' }) => {
                 </Stack>
             )}
 
-            {record.phone_1_number && (
+            {record.phone_number && (
                 <Stack direction="row" alignItems="center" gap={1}>
                     <PhoneIcon color="disabled" fontSize="small" />
                     <Box>
-                        <TextField source="phone_1_number" />{' '}
-                        {record.phone_1_type !== 'Other' && (
-                            <TextField
-                                source="phone_1_type"
-                                color="textSecondary"
-                            />
-                        )}
+                        <TextField source="phone_number" />{' '}
                     </Box>
                 </Stack>
             )}
-            {record.phone_2_number && (
-                <Stack
-                    direction="row"
-                    alignItems="center"
-                    gap={1}
-                    minHeight={24}
-                >
-                    <PhoneIcon color="disabled" fontSize="small" />
-                    <Box>
-                        <TextField source="phone_2_number" />{' '}
-                        {record.phone_2_type !== 'Other' && (
-                            <TextField
-                                source="phone_2_type"
-                                color="textSecondary"
-                            />
-                        )}
-                    </Box>
-                </Stack>
-            )}
+
             <Typography variant="subtitle2" mt={2}>
                 Smile Goals
             </Typography>
             <Divider />
             <Typography variant="body2" mt={2}>
-                {record && record.background}
+                {record && record.smile_goals}
             </Typography>
             <br />
             <Box mb={3}>
                 <Typography variant="subtitle2">Tasks</Typography>
                 <Divider />
                 <ReferenceManyField
-                    target="contact_id"
+                    target="patient_id"
                     reference="tasks"
                     sort={{ field: 'due_date', order: 'ASC' }}
                 >

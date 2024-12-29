@@ -1,5 +1,4 @@
-import TrashIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+
 import ContentSave from '@mui/icons-material/Save';
 import {
     Box,
@@ -21,21 +20,16 @@ import {
 } from 'react-admin';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
-import { CompanyAvatar } from '../companies/CompanyAvatar';
-import { Avatar } from '../contacts/Avatar';
-import { RelativeDate } from '../misc/RelativeDate';
-import { Status } from '../misc/Status';
-import { SaleName } from '../sales/SaleName';
-import { ContactNote, DealNote } from '../types';
+import { Message as MessageData } from '../types';
 import { MessageAttachments } from './MessageAttachments';
 import { MessageInputs } from './MessageInputs';
 
 export const Message = ({
     showStatus,
-    note,
+    message,
 }: {
     showStatus?: boolean;
-    note: DealNote | ContactNote;
+    message: MessageData;
     isLast: boolean;
 }) => {
     const [isHover, setHover] = useState(false);
@@ -45,9 +39,9 @@ export const Message = ({
 
     const [update, { isPending }] = useUpdate();
 
-    const [deleteNote] = useDelete(
+    const [deteleMessage] = useDelete(
         resource,
-        { id: note.id, previousData: note },
+        { id: message.id, previousData: message },
         {
             mutationMode: 'undoable',
             onSuccess: () => {
@@ -57,7 +51,7 @@ export const Message = ({
     );
 
     const handleDelete = () => {
-        deleteNote();
+        deteleMessage();
     };
 
     const handleEnterEditMode = () => {
@@ -69,10 +63,10 @@ export const Message = ({
         setHover(false);
     };
 
-    const handleNoteUpdate: SubmitHandler<FieldValues> = values => {
+    const handleMessageUpdate: SubmitHandler<FieldValues> = values => {
         update(
             resource,
-            { id: note.id, data: values, previousData: note },
+            { id: message.id, data: values, previousData: message },
             {
                 onSuccess: () => {
                     setEditing(false);
@@ -89,66 +83,67 @@ export const Message = ({
             pb={1}
         >
             <Stack direction="row" spacing={1} alignItems="center" width="100%">
-                {resource === 'contactNote' ? (
-                    <Avatar width={20} height={20} />
-                ) : (
-                    <ReferenceField
-                        source="company_id"
-                        reference="companies"
-                        link="show"
-                    >
-                        <CompanyAvatar width={20} height={20} />
-                    </ReferenceField>
-                )}
                 <Typography color="text.secondary" variant="body2">
                     <ReferenceField
-                        record={note}
-                        resource={resource}
-                        source="sales_id"
-                        reference="sales"
-                        link={false}
+                        source="sender_id"
+                        reference={
+                            message.sender_type === 'patient'
+                                ? 'patients'
+                                : 'dentists'
+                        }
+                        link="show"
                     >
-                        <WithRecord
-                            render={record => <SaleName sale={record} />}
-                        />
+                        {message.sender_type === 'patient' ? (
+                            <WithRecord
+                                render={record =>
+                                    `${record.first_name} ${record.last_name}`
+                                }
+                            />
+                        ) : (
+                            <WithRecord
+                                render={record =>
+                                    `${record.first_name} ${record.last_name}`
+                                }
+                            />
+                        )}
                     </ReferenceField>{' '}
-                    sent a message{' '}
-                    {showStatus && note.status && (
-                        <Status status={note.status} />
-                    )}
-                    <Box
-                        component="span"
-                        sx={{
-                            ml: 2,
-                            visibility: isHover ? 'visible' : 'hidden',
-                        }}
+                    sent a message to{' '}
+                    <ReferenceField
+                        source="receiver_id"
+                        reference={
+                            message.sender_type === 'patient'
+                                ? 'dentists'
+                                : 'patients'
+                        }
+                        link="show"
                     >
-                        <Tooltip title="Edit note">
-                            <IconButton
-                                size="small"
-                                onClick={handleEnterEditMode}
-                            >
-                                <EditIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete note">
-                            <IconButton size="small" onClick={handleDelete}>
-                                <TrashIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </Box>
-                </Typography>
-                <Box flex={1}></Box>
-                <Typography
-                    color="textSecondary"
-                    variant="body2"
-                    component="span"
-                >
-                    <RelativeDate date={note.date} />
+                        {message.sender_type === 'patient' ? (
+                            <WithRecord
+                                render={record =>
+                                    `${record.first_name} ${record.last_name}`
+                                }
+                            />
+                        ) : (
+                            <WithRecord
+                                render={record =>
+                                    `${record.first_name} ${record.last_name}`
+                                }
+                            />
+                        )}
+                    </ReferenceField>{' '}
+                    on{' '}
+                    <Typography
+                        color="textSecondary"
+                        variant="body2"
+                        component="span"
+                    >
+                        {new Date(message.created_at).toLocaleString()}
+                    </Typography>
                 </Typography>
             </Stack>
+
             {isEditing ? (
-                <Form onSubmit={handleNoteUpdate} record={note}>
+                <Form onSubmit={handleMessageUpdate} record={message}>
                     <MessageInputs showStatus={showStatus} edition />
                     <Box display="flex" justifyContent="flex-start" mt={1}>
                         <Button
@@ -179,7 +174,7 @@ export const Message = ({
                         },
                     }}
                 >
-                    {note.text
+                    {message.text
                         ?.split('\n')
                         .map((paragraph: string, index: number) => (
                             <Typography
@@ -193,7 +188,9 @@ export const Message = ({
                             </Typography>
                         ))}
 
-                    {note.attachments && <MessageAttachments note={note} />}
+                    {message.attachments && (
+                        <MessageAttachments message={message} />
+                    )}
                 </Stack>
             )}
         </Box>

@@ -5,7 +5,7 @@ from datetime import timedelta
 CONFIG_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = CONFIG_DIR.parent
 ROOT_DIR = BACKEND_DIR.parent
-ROOT_URLCONF = BACKEND_DIR/'config.urls'
+ROOT_URLCONF = 'config.urls'
 
 MEDIA_DIR = ROOT_DIR / "media"
 MEDIA_URL = "/media/"
@@ -47,7 +47,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'smileapp',
+        'NAME': 'smiletest',
         'USER': 'jasjeetdhaliwal',
         'PASSWORD': 'smileapp_password',
         'HOST': 'localhost',
@@ -95,4 +95,19 @@ SIMPLE_JWT = {
 # CORS configuration
 CORS_ALLOWED_ORIGINS = [
      "http://localhost:3000"
+]
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
 ]

@@ -1,28 +1,30 @@
 import * as React from 'react';
 import { Box, Divider, Stack } from '@mui/material';
-import { useListContext } from 'react-admin';
+import { useListContext, useGetIdentity, useRecordContext } from 'react-admin';
 
 import { Message } from './Message';
 import { MessageCreate } from './MessageCreate';
 
-export const MessagesIterator = ({
-    showStatus,
-    reference,
-}: {
-    showStatus?: boolean;
-    reference: 'patients' | 'dentists';
-}) => {
-    const { data, error, isPending } = useListContext();
-    if (isPending || error) return null;
+export const MessagesIterator = ({ showStatus }: { showStatus?: boolean }) => {
+    const { data, error, isPending } = useListContext(); // Fetch the messages
+    const { identity } = useGetIdentity(); // Get logged-in user's identity
+    const record = useRecordContext(); // The record for the receiver
+
+    // Ensure that we have both the logged-in user and the receiver's record
+    if (!identity || !record || isPending || error) return null;
+
     return (
         <Box mt={2}>
-            <MessageCreate showStatus={showStatus} reference={reference} />
+            {/* Render the message creation form */}
+            <MessageCreate showStatus={showStatus} />
+
+            {/* Iterate through and render each message */}
             {data && (
                 <Stack mt={2} gap={1}>
-                    {data.map((note, index) => (
+                    {data.map((message, index) => (
                         <React.Fragment key={index}>
                             <Message
-                                note={note}
+                                message={message}
                                 isLast={index === data.length - 1}
                                 key={index}
                             />

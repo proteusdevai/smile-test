@@ -1,7 +1,3 @@
-import Man2Icon from '@mui/icons-material/Man2';
-import WcIcon from '@mui/icons-material/Wc';
-import Woman2Icon from '@mui/icons-material/Woman2';
-
 export const defaultLogo = './logos/logo_atomic_crm.svg';
 
 export const defaultTitle = 'Smile App';
@@ -14,8 +10,6 @@ export const defaultStages = [
     { value: 'lost', label: 'Lost' },
     { value: 'delayed', label: 'Delayed' },
 ];
-
-export const defaultConsultPipelineStatuses = ['opportunity'];
 
 export const defaultConsultCategories = [
     'Invisalign',

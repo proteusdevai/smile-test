@@ -8,7 +8,7 @@ from smileapp.filters import ConsultsFilter, ConsultNotesFilter
 from smileapp.models import ConsultNotes, Consults
 from smileapp.permissions import IsDentist, IsOwnerDentistOfResource
 from smileapp.serializers import ConsultNotesSerializer, ConsultsSerializer
-from utils import get_user_dentist
+from .utils import get_user_dentist
 
 
 class ConsultNotesViewSet(viewsets.ModelViewSet):

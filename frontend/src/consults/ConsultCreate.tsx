@@ -31,30 +31,41 @@ export const ConsultCreate = ({ open }: { open: boolean }) => {
             redirect('/consults');
             return;
         }
-        // increase the index of all consults in the same stage as the new consult
-        // first, get the list of consults in the same stage
+
+        // Filter consults in the same stage, skipping the newly created consult
         const consults = allConsults.filter(
             (c: Consult) => c.stage === consult.stage && c.id !== consult.id
         );
-        // update the actual consults in the database
+
+        // Update the database for all filtered consults
         await Promise.all(
-            consults.map(async oldConsult =>
-                dataProvider.update('consults', {
+            consults.map(async oldConsult => {
+                if (oldConsult.index == null) {
+                    console.warn(
+                        `Consult ${oldConsult.id} has an undefined index.`
+                    );
+                    return Promise.resolve();
+                }
+                return dataProvider.update('consults', {
                     id: oldConsult.id,
-                    data: { index: oldConsult.index + 1 },
+                    data: { index: (oldConsult.index ?? 0) + 1 }, // Ensure index is not undefined
                     previousData: oldConsult,
-                })
-            )
+                });
+            })
         );
-        // refresh the list of deals in the cache as we used dataProvider.update(),
-        // which does not update the cache
+
+        // Update the cache for the consults
         const consultsById = consults.reduce(
-            (acc, c) => ({
-                ...acc,
-                [c.id]: { ...c, index: c.index + 1 },
-            }),
+            (acc, c) => {
+                const updatedIndex = (c.index ?? 0) + 1; // Ensure index is not undefined
+                return {
+                    ...acc,
+                    [c.id]: { ...c, index: updatedIndex },
+                };
+            },
             {} as { [key: string]: Consult }
         );
+
         const now = Date.now();
         queryClient.setQueriesData<GetListResult | undefined>(
             { queryKey: ['consults', 'getList'] },
@@ -67,6 +78,7 @@ export const ConsultCreate = ({ open }: { open: boolean }) => {
             },
             { updatedAt: now }
         );
+
         redirect('/consults');
     };
 

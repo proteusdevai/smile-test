@@ -20,12 +20,16 @@ export const getConsultsByStage = (
                 {} as Record<Consult['stage'], Consult[]>
             )
         );
-    // order each column by index
     stages.forEach(stage => {
-        consultsByStage[stage.value] = consultsByStage[stage.value].sort(
-            (recordA: Consult, recordB: Consult) =>
-                recordA.index - recordB.index
-        );
+        const consults = consultsByStage[stage.value];
+
+        if (Array.isArray(consults)) {
+            consultsByStage[stage.value] = consults.sort(
+                (recordA: Consult, recordB: Consult) =>
+                    (recordA.index ?? 0) - (recordB.index ?? 0) // Handle null or undefined index
+            );
+        }
     });
+
     return consultsByStage;
 };

@@ -16,7 +16,9 @@ class Dentists(models.Model):
     administrator = models.BooleanField()
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     disabled = models.BooleanField(default=False)
 
@@ -64,6 +66,7 @@ class Consults(models.Model):
     name = models.TextField(null=False, blank=False)
     patient = models.ForeignKey(Patients, on_delete=models.CASCADE)
     dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE)
+    stage = models.TextField(null=False, blank=False)
     category = models.TextField(null=False, blank=False)
     description = models.TextField(null=False, blank=False)
     amount = models.BigIntegerField(null=True, blank=True)
@@ -73,14 +76,24 @@ class Consults(models.Model):
     expected_visit_date = models.DateTimeField(null=True, blank=True)
     index = models.SmallIntegerField(null=True, blank=True)
 
+    @property
+    def stage(self):
+        """Fetch the stage directly from the associated patient."""
+        return self.patient.stage
+
     def __str__(self):
         return f"Consult {self.id} for Patient {self.patient_id}"
 
 
 class Messages(models.Model):
     id = models.BigAutoField(primary_key=True)
-    patient = models.ForeignKey(Patients, on_delete=models.CASCADE)
-    dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patients, on_delete=models.CASCADE, related_name="messages")
+    dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE, related_name="messages")
+    sender_id = models.UUIDField()  # Will store either a patient or dentist ID
+    sender_type = models.CharField(
+        max_length=10,
+        choices=(("patient", "Patient"), ("dentist", "Dentist"))
+    )  # Indicates the type of sender
     text = models.TextField(null=True, blank=True)
     title = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -95,15 +108,29 @@ class Messages(models.Model):
         ]
 
     def clean(self):
-        if not self.text and not self.attachments:
-            raise ValidationError("Message must have text or attachments.")
+        """Ensure that text is provided."""
+        if not self.text:
+            raise ValidationError("Message must have text.")
 
     def __str__(self):
+        """String representation of the message."""
         return f"Message {self.id} between Patient {self.patient_id} and Dentist {self.dentist_id}"
 
-    def has_attachments(self):
-        """Checks if the message has any attachments."""
-        return bool(self.attachments)
+    def get_sender(self):
+        """Return sender information."""
+        if self.sender_type == "patient":
+            return Patients.objects.get(id=self.sender_id)
+        elif self.sender_type == "dentist":
+            return Dentists.objects.get(id=self.sender_id)
+        return None
+
+    def get_receiver(self):
+        """Return receiver information."""
+        if self.sender_type == "patient":
+            return Dentists.objects.get(id=self.dentist_id)
+        elif self.sender_type == "dentist":
+            return Patients.objects.get(id=self.patient_id)
+        return None
 
 
 class ConsultNotes(models.Model):
@@ -134,7 +161,7 @@ class Tags(models.Model):
 class Tasks(models.Model):
     id = models.BigAutoField(primary_key=True)
     patient = models.ForeignKey(Patients, on_delete=models.CASCADE)
-    dentist = models.ForeignKey(Dentists, on_delete=models.SET_NULL)
+    dentist = models.ForeignKey(Dentists, on_delete=models.SET_NULL, null=True, blank=True)
     type = models.TextField()
     text = models.TextField(null=True, blank=True)
     due_date = models.DateTimeField()
@@ -146,7 +173,7 @@ class Tasks(models.Model):
 
 class RAFile(models.Model):
     id = models.BigAutoField(primary_key=True, default=uuid.uuid4, editable=False)
-    file = models.FileField(upload_to='/uploads/')  # The actual file stored in the backend
+    file = models.FileField(upload_to='uploads/')  # The actual file stored in the backend
     title = models.CharField(max_length=255)  # The descriptive title of the file
     path = models.CharField(max_length=255)
     src = models.URLField()  # URL for accessing the file

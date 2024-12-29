@@ -10,10 +10,10 @@ import {
     useRecordContext,
 } from 'react-admin';
 
-const SalesListActions = () => (
+const DentistListActions = () => (
     <TopToolbar>
         <ExportButton />
-        <CreateButton variant="contained" label="New user" />
+        <CreateButton variant="contained" label="New dentist" />
     </TopToolbar>
 );
 
@@ -49,7 +49,7 @@ export function DentistList() {
         <Stack gap={4}>
             <List
                 filters={filters}
-                actions={<SalesListActions />}
+                actions={<DentistListActions />}
                 sort={{ field: 'first_name', order: 'ASC' }}
             >
                 <DatagridConfigurable rowClick="edit" bulkActionButtons={false}>

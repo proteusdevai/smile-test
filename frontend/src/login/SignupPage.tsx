@@ -20,7 +20,7 @@ export const SignupPage = () => {
     const dataProvider = useDataProvider<AppDataProvider>();
     const { logo, title } = useConfigurationContext();
 
-    const { isPending: isSignUpPending, mutate } = useMutation({
+    const { isPending: isSignUpPending, mutate: signup } = useMutation({
         mutationKey: ['signup'],
         mutationFn: async (data: SignUpData) => {
             return dataProvider.signUp(data);
@@ -53,17 +53,12 @@ export const SignupPage = () => {
         mode: 'onChange',
     });
 
-    if (isPending) {
+    if (isSignUpPending) {
         return <LoginSkeleton />;
     }
 
-    // For the moment, we only allow one user to sign up. Other users must be created by the administrator.
-    if (isInitialized) {
-        return <Navigate to="/login" />;
-    }
-
     const onSubmit: SubmitHandler<SignUpData> = async data => {
-        mutate(data);
+        signup(data);
     };
 
     return (
@@ -91,7 +86,7 @@ export const SignupPage = () => {
                     }}
                 >
                     <Typography variant="h4" component="h1" gutterBottom>
-                        Welcome to Atomic CRM
+                        Welcome to SmileApp
                     </Typography>
                     <Typography variant="body1" gutterBottom>
                         Create the first user account to complete the setup.

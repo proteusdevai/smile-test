@@ -1,11 +1,5 @@
 import * as React from 'react';
-import {
-    ShowBase,
-    TextField,
-    ReferenceField,
-    ReferenceManyField,
-    useShowContext,
-} from 'react-admin';
+import { ShowBase, RecordContextProvider, useShowContext } from 'react-admin';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 
 import { PatientAside } from './PatientAside';
@@ -14,12 +8,12 @@ import { Patient } from '../types';
 
 export const PatientShow = () => (
     <ShowBase>
-        <ContactShowContent />
+        <PatientShowContent />
     </ShowBase>
 );
 
-const ContactShowContent = () => {
-    const { record, isPending } = useShowContext<Contact>();
+const PatientShowContent = () => {
+    const { record, isPending } = useShowContext<Patient>();
     if (isPending || !record) return null;
 
     return (
@@ -32,13 +26,9 @@ const ContactShowContent = () => {
                                 {record.first_name} {record.last_name}
                             </Typography>
                         </Box>
-                        <ReferenceManyField
-                            target="contact_id"
-                            reference="contactNotes"
-                            sort={{ field: 'date', order: 'DESC' }}
-                        >
-                            <MessagesIterator showStatus reference="contacts" />
-                        </ReferenceManyField>
+                        <RecordContextProvider value={record}>
+                            <MessagesIterator />
+                        </RecordContextProvider>
                     </CardContent>
                 </Card>
             </Box>

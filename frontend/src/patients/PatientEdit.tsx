@@ -10,7 +10,7 @@ import { Card, CardContent, Box } from '@mui/material';
 
 import { PatientInputs } from './PatientInputs';
 import { PatientAside } from './PatientAside';
-import { Contact } from '../types';
+import { Patient } from '../types';
 
 export const PatientEdit = () => (
     <EditBase redirect="show">
@@ -19,7 +19,7 @@ export const PatientEdit = () => (
 );
 
 const ContactEditContent = () => {
-    const { isPending, record } = useEditContext<Contact>();
+    const { isPending, record } = useEditContext<Patient>();
     if (isPending || !record) return null;
     return (
         <Box mt={2} display="flex">

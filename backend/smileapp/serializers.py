@@ -33,7 +33,7 @@ class ConsultsSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'category', 'stage', 'description', 'amount',
             'created_at', 'updated_at', 'archived_at', 'expected_visit_date',
-            'patient', 'dentist', 'index'
+            'patient', 'dentist', 'stage', 'index'
         ]
 
 

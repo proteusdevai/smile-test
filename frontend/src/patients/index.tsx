@@ -3,13 +3,13 @@ import { PatientShow } from './PatientShow';
 import { PatientList } from './PatientList';
 import { PatientEdit } from './PatientEdit';
 import { PatientCreate } from './PatientCreate';
-import { Contact } from '../types';
+import { Patient } from '../types';
 
 export default {
     list: PatientList,
     show: PatientShow,
     edit: PatientEdit,
     create: PatientCreate,
-    recordRepresentation: (record: Contact) =>
+    recordRepresentation: (record: Patient) =>
         record?.first_name + ' ' + record?.last_name,
 };

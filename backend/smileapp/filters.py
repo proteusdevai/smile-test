@@ -1,7 +1,7 @@
 import django_filters
 from django_filters import rest_framework as filters
 
-from models import Dentists, Patients, Consults, Messages, ConsultNotes, Tags, Tasks
+from .models import Dentists, Patients, Consults, Messages, ConsultNotes, Tags, Tasks
 
 
 class DentistsFilter(filters.FilterSet):

@@ -15,11 +15,9 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import { endOfYesterday, startOfWeek, startOfMonth, subMonths } from 'date-fns';
 
-import { Status } from '../misc/Status';
 import { useConfigurationContext } from '../root/ConfigurationContext';
 
 export const PatientListFilter = () => {
-    const { noteStatuses } = useConfigurationContext();
     const { identity } = useGetIdentity();
     const { data } = useGetList('tags', {
         pagination: { page: 1, perPage: 10 },
@@ -35,19 +33,6 @@ export const PatientListFilter = () => {
                 }}
                 placeholder="Search name, company, etc."
             />
-            <FilterList label="Status" icon={<EventNoteIcon />}>
-                {noteStatuses.map(status => (
-                    <FilterListItem
-                        key={status.value}
-                        label={
-                            <>
-                                {status.label} <Status status={status.value} />
-                            </>
-                        }
-                        value={{ status: status.value }}
-                    />
-                ))}
-            </FilterList>
             <FilterList label="Tasks" icon={<AssignmentTurnedInIcon />}>
                 <FilterListItem
                     label="With pending tasks"
