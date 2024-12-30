@@ -21,7 +21,7 @@ class HealthCheckView(APIView):
             "environment": False,
             "status": "unhealthy",
         }
-
+        print('Received a healthcheck request')
         # Check Database Connectivity
         try:
             db_conn = connections['default']

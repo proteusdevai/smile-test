@@ -115,8 +115,8 @@ export const PMS = ({
             <CustomRoutes>
                 <Route path={SettingsPage.path} element={<SettingsPage />} />
             </CustomRoutes>
-            <Resource name="consults" {...consults} />
             <Resource name="patients" {...patients} />
+            <Resource name="consults" {...consults} />
             <Resource name="consultNotes" />
             <Resource name="tasks" list={ListGuesser} />
             <Resource name="dentists" {...dentists} />

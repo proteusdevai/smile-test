@@ -8,7 +8,8 @@ from smileapp.views import (
     MessagesViewSet,
     ConsultNotesViewSet,
     TagsViewSet,
-    TasksViewSet
+    TasksViewSet,
+    UsersViewSet,
 )
 
 router = DefaultRouter()
@@ -19,3 +20,4 @@ router.register('messages', MessagesViewSet, basename='messages')
 router.register('consult-messages', ConsultNotesViewSet, basename='consul-tnotes')
 router.register('tasks', TasksViewSet, basename='tasks')
 router.register('tags', TagsViewSet, basename='tags')
+router.register('users', UsersViewSet, basename='users')

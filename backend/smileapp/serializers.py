@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User  # Import the User model
 
 from .models import (
     Dentists,
@@ -11,6 +12,12 @@ from .models import (
     RAFile
 )
 
+
+# Serializer for the User model
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 class DentistsSerializer(serializers.ModelSerializer):
     class Meta:

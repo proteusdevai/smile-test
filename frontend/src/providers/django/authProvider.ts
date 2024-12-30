@@ -9,69 +9,92 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         obtainAuthTokenUrl: '/api/token/',
         ...options,
     };
+
     return {
-        login: async ({ username, password }) => {
+        login: async ({ email, password }) => {
+            console.info('Sending a login request.');
+            const header = new Headers({ 'Content-Type': 'application/json' });
             const request = new Request(opts.obtainAuthTokenUrl, {
                 method: 'POST',
-                body: JSON.stringify({ username, password }),
-                headers: new Headers({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ username: email, password }),
+                headers: header,
             });
+            console.info('Sending requsest with header:');
+            console.info('Logging all headers in the request:');
+            for (const [key, value] of request.headers.entries()) {
+                console.info(`${key}: ${value}`);
+            }
             const response = await fetch(request);
+            // Check if the response is successfulSt
             if (response.ok) {
-                const responseJSON = await response.json();
-                localStorage.setItem('access', responseJSON.access);
-                localStorage.setItem('refresh', responseJSON.refresh);
+                console.info('Received a valid login.');
+                const responseJSON = await response.json(); // Parse JSON
+                localStorage.setItem('access_token', responseJSON.access);
+                localStorage.setItem('refresh_token', responseJSON.refresh);
                 return;
             }
-            if (response.headers.get('content-type') !== 'application/json') {
-                throw new Error(response.statusText);
+
+            // Handle errors
+            if (response.status === 415) {
+                console.error(
+                    'Unsupported Media Type: Check Content-Type header or body formatting.'
+                );
+                throw new Error('Unsupported Media Type.');
             }
 
-            const json = await response.json();
-            const error = json.non_field_errors;
-            throw new Error(error || response.statusText);
+            // Handle other errors
+            const error = await response.json();
+            throw new Error(
+                error?.non_field_errors || `Error: ${response.statusText}`
+            );
         },
+
         logout: () => {
-            localStorage.removeItem('access');
-            localStorage.removeItem('refresh');
+            console.info('REMOVING TOKENS LOGOUT....');
+            //localStorage.removeItem('access_token');
+            //localStorage.removeItem('refresh_token');
             return Promise.resolve();
         },
-        checkAuth: () =>
-            localStorage.getItem('access')
+
+        checkAuth: () => {
+            return localStorage.getItem('access_token')
                 ? Promise.resolve()
-                : Promise.reject(),
+                : Promise.reject();
+        },
+
         checkError: error => {
             const status = error.status;
             if (status === 401 || status === 403) {
-                localStorage.removeItem('access');
-                localStorage.removeItem('refresh');
+                console.info('REMOVING TOKENS ....');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
                 return Promise.reject();
             }
             return Promise.resolve();
         },
-        getPermissions: () => {
-            return Promise.resolve();
-        },
+
+        getPermissions: () => Promise.resolve(),
+
         getIdentity: async () => {
-            const response = await fetch('/api/users/', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            if (!response.ok) {
-                return Promise.reject(new Error('Unable to fetch identity')); // Proper Error object
-            }
-            const { id, first_name, last_name, email } = await response.json();
+            console.info('Hello worldy world');
+            const response = await fetchJsonWithAuthJWTToken(
+                'http://localhost:8000/api/users/',
+                {}
+            );
+
+            // @ts-ignore
+            const { id, first_name, last_name, email } = response.json;
+            console.info('Getting identity: ');
+            console.info(id, first_name, email);
             return { id, first_name, last_name, email }; // Identity object
         },
     };
 }
 
 export function createOptionsFromJWTToken() {
-    const token = localStorage.getItem('access');
-    if (!token) {
-        return {};
-    }
+    const token = localStorage.getItem('access_token');
+    if (!token) return {};
+
     return {
         user: {
             authenticated: true,
@@ -80,11 +103,11 @@ export function createOptionsFromJWTToken() {
     };
 }
 
-export function fetchJsonWithAuthJWTToken(url: string, options: object) {
-    return fetchUtils.fetchJson(
-        url,
-        Object.assign(createOptionsFromJWTToken(), options)
-    );
+export function fetchJsonWithAuthJWTToken(url: string, options: any = {}) {
+    const new_options = Object.assign(createOptionsFromJWTToken(), options);
+    // Log the full new_options object
+    console.log('Options after merging:', JSON.stringify(new_options, null, 2));
+    return fetchUtils.fetchJson(url, new_options);
 }
 
 export const authProvider = jwtTokenAuthProvider({

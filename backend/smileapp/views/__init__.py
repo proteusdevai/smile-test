@@ -7,6 +7,7 @@ from .tags import TagsViewSet
 from .tasks import TasksViewSet
 from .rafile import RAFileView
 from .user_views import ResetPasswordView
+from .users import UsersViewSet
 
 __all__ = [
     "PatientsViewSet", "PatientSignUpView",
@@ -19,4 +20,5 @@ __all__ = [
     "RAFileView",
     "HealthCheckView",
     "ResetPasswordView",
+    "UsersViewSet"
 ]

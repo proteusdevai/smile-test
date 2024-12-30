@@ -32,12 +32,12 @@ class ConsultsFilter(filters.FilterSet):
     category = django_filters.CharFilter(field_name="category", lookup_expr="icontains")
     patient = django_filters.NumberFilter(field_name="patient_id")
     dentist = django_filters.NumberFilter(field_name="dentist_id")
-    created_after = django_filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
-    created_before = django_filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
+    created_at__gte = django_filters.DateTimeFilter(field_name="created_at", lookup_expr="gte")
+    created_at__lte = django_filters.DateTimeFilter(field_name="created_at", lookup_expr="lte")
 
     class Meta:
         model = Consults
-        fields = ["stage", "category", "patient", "dentist"]
+        fields = ["stage", "category", "patient", "dentist","created_at__gte", "created_at__lte"]
 
 
 class MessagesFilter(filters.FilterSet):
