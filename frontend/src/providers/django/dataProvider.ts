@@ -1,11 +1,9 @@
-import drfProvider, {
-    fetchJsonWithAuthToken,
-} from 'ra-data-django-rest-framework';
-
+import customDataProvider from './customDataProvider';
 import {
     DataProvider,
     GetListParams,
-    Identifier, UserIdentity,
+    Identifier,
+    UserIdentity,
     withLifecycleCallbacks,
 } from 'react-admin';
 import {
@@ -17,10 +15,7 @@ import {
 } from '../../types';
 import { getActivityLog } from '../commons/activity';
 
-const baseDataProvider = drfProvider(
-    'http://127.0.0.1:8000/api',
-    fetchJsonWithAuthToken
-);
+const baseDataProvider = customDataProvider;
 
 const dataProviderWithCustomMethods = {
     ...baseDataProvider,

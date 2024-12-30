@@ -20,7 +20,7 @@ const threeMonthsAgo = new Date(
 
 export const ConsultsChart = () => {
     const { data, isPending } = useGetList<Consult>('consults', {
-        pagination: { perPage: 100, page: 1 },
+        pagination: { perPage: 66, page: 1 },
         sort: {
             field: 'created_at',
             order: 'ASC',

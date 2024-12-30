@@ -78,7 +78,7 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         getIdentity: async () => {
             console.info('Hello worldy world');
             const response = await fetchJsonWithAuthJWTToken(
-                'http://localhost:8000/api/users/',
+                'http://localhost:8000/api/users/?id=me',
                 {}
             );
 

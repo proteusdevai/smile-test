@@ -26,7 +26,7 @@ class ConsultNotesViewSet(viewsets.ModelViewSet):
 class ConsultsViewSet(viewsets.ModelViewSet):
     """Only the dentist who owns the consult can see it."""
     serializer_class = ConsultsSerializer
-    permission_classes = [IsAuthenticated, IsDentist, IsOwnerDentistOfResource]
+    #permission_classes = [IsAuthenticated, IsDentist, IsOwnerDentistOfResource]
     filter_backends = [DjangoFilterBackend]
     filterset_class = ConsultsFilter
 
