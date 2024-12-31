@@ -4,15 +4,17 @@ from django_filters import rest_framework as filters
 from .models import Dentists, Patients, Consults, Messages, ConsultNotes, Tags, Tasks
 
 
-class DentistsFilter(filters.FilterSet):
-    first_name = django_filters.CharFilter(field_name="first_name", lookup_expr="icontains")
-    last_name = django_filters.CharFilter(field_name="last_name", lookup_expr="icontains")
-    email = django_filters.CharFilter(field_name="email", lookup_expr="icontains")
-    administrator = django_filters.BooleanFilter(field_name="administrator")
 
+
+class DentistsFilter(django_filters.FilterSet):
     class Meta:
-        model = Dentists
-        fields = ["first_name", "last_name", "email", "administrator"]
+        model = Dentists  # Ensure this matches the Dentists model
+        fields = {
+            'id': ['exact', 'icontains'],  # Example filters
+            'first_name': ['exact', 'icontains'],
+            'last_name': ['exact', 'icontains'],
+        }
+
 
 
 class PatientsFilter(filters.FilterSet):

@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { ShowBase, RecordContextProvider, useShowContext } from 'react-admin';
+import {
+    ShowBase,
+    RecordContextProvider,
+    useShowContext,
+    useList,
+    ListContextProvider,
+    useGetList,
+} from 'react-admin';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 
 import { PatientAside } from './PatientAside';
@@ -14,8 +21,44 @@ export const PatientShow = () => (
 
 const PatientShowContent = () => {
     const { record, isPending } = useShowContext<Patient>();
-    if (isPending || !record) return null;
 
+    const {
+        data: messages,
+        total,
+        isLoading,
+    } = useGetList('messages', {
+        filter: record ? { patient_id: record.id } : {},
+    });
+
+    const listContext = useList({
+        data: messages,
+        isFetching: isPending,
+        resource: 'messages',
+        perPage: 50,
+    });
+    console.info(
+        'Received following messages:',
+        JSON.stringify({ messages, total }, null, 2)
+    );
+
+    // Handle loading or empty states
+    if (isLoading || isPending || !messages || messages.length === 0) {
+        return (
+            <Box mt={2} mb={2} display="flex">
+                <Box flex="1">
+                    <Card>
+                        <CardContent>
+                            <Typography variant="body2">
+                                No messages found.
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Box>
+            </Box>
+        );
+    }
+
+    // @ts-ignore
     return (
         <Box mt={2} mb={2} display="flex">
             <Box flex="1">
@@ -27,7 +70,9 @@ const PatientShowContent = () => {
                             </Typography>
                         </Box>
                         <RecordContextProvider value={record}>
-                            <MessagesIterator />
+                            <ListContextProvider value={listContext}>
+                                <MessagesIterator />
+                            </ListContextProvider>
                         </RecordContextProvider>
                     </CardContent>
                 </Card>

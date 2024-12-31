@@ -104,7 +104,7 @@ export const AddTask = ({
                 resource="tasks"
                 record={{
                     type: 'None',
-                    contact_id: patient?.id,
+                    patient_id: patient?.id,
                     due_date: new Date().toISOString().slice(0, 10),
                     dentist_id: identity.id,
                 }}

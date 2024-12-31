@@ -18,14 +18,13 @@ import { MessageInputs } from './MessageInputs';
 import { getCurrentDate } from './utils';
 
 export const MessageCreate = ({ showStatus }: { showStatus?: boolean }) => {
-    const resource = useResourceContext(); // Current resource context
     const record = useRecordContext(); // The receiver's record
     const { identity } = useGetIdentity(); // The logged-in user's identity
 
     if (!record || !identity) return null;
 
     return (
-        <CreateBase resource={resource} redirect={false}>
+        <CreateBase resource="messages" redirect={false}>
             <Form>
                 <MessageInputs showStatus={showStatus} />
                 <Stack direction="row">
@@ -37,14 +36,13 @@ export const MessageCreate = ({ showStatus }: { showStatus?: boolean }) => {
 };
 
 const MessageCreateButton = ({ record }: { record: RaRecord<Identifier> }) => {
-    const [update] = useUpdate();
     const notify = useNotify();
     const { identity } = useGetIdentity();
     const { reset } = useFormContext();
     const { refetch } = useListContext();
 
     if (!record || !identity) return null;
-
+    console.info('here is the record', JSON.stringify(record, null, 2));
     const resetValues = {
         created_at: getCurrentDate(),
         text: null,
@@ -62,15 +60,14 @@ const MessageCreateButton = ({ record }: { record: RaRecord<Identifier> }) => {
             type="button"
             label="Send Message"
             variant="contained"
+            resource="messages"
             transform={data => {
-                const isPatientSender = identity.role === 'patient';
 
                 return {
                     ...data,
-                    patient: isPatientSender ? identity.id : record.patient_id,
-                    dentist: isPatientSender ? record.dentist_id : identity.id,
+                    patient_id: 'dentist' in record ? record.id : identity.id,
+                    dentist_id: 'dentist' in record ? identity.id : record.id,
                     sender_id: identity.id,
-                    sender_type: isPatientSender ? 'patient' : 'dentist',
                     created_at: data.created_at || getCurrentDate(),
                 };
             }}

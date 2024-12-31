@@ -71,17 +71,14 @@ const ConsultLinkedToInputs = () => {
         <Stack gap={1} flex={1}>
             <Typography variant="subtitle1">Linked to</Typography>
 
-            <ReferenceArrayInput
-                source="patient_id"
-                reference="patients_summary"
-            >
-                <AutocompleteArrayInput
+            <ReferenceInput source="patient_id" reference="patients">
+                <AutocompleteInput
                     label="Patients"
                     optionText={patientOptionText}
                     inputText={patientInputText}
                     helperText={false}
                 />
-            </ReferenceArrayInput>
+            </ReferenceInput>
         </Stack>
     );
 };
@@ -108,7 +105,7 @@ const ConsultMiscInputs = () => {
                 helperText={false}
             />
             <DateInput
-                source="expected_closing_date"
+                source="expected_visit_date"
                 fullWidth
                 validate={[validateRequired]}
                 helperText={false}

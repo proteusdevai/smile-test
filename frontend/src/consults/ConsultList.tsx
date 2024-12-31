@@ -59,7 +59,7 @@ const ConsultLayout = () => {
             <>
                 <ConsultEmpty>
                     <ConsultShow open={!!matchShow} id={matchShow?.params.id} />
-                    <ConsultArchivedList />
+
                 </ConsultEmpty>
             </>
         );
@@ -74,7 +74,6 @@ const ConsultLayout = () => {
             <Card>
                 <ConsultListContent />
             </Card>
-            <ConsultArchivedList />
             <ConsultCreate open={!!matchCreate} />
             <ConsultEdit
                 open={!!matchEdit && !matchCreate}
@@ -86,7 +85,15 @@ const ConsultLayout = () => {
 };
 
 const ConsultActions = () => {
-    return <TopToolbar></TopToolbar>;
+    return (
+        <TopToolbar>
+            <CreateButton
+                variant="contained"
+                label="New Consult"
+                sx={{ marginLeft: 2 }}
+            />
+        </TopToolbar>
+    );
 };
 
 export default ConsultList;

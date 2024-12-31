@@ -45,46 +45,56 @@ class MessagesViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Override create to handle initial message creation with attachments."""
+        logger.info("Received request: {}".format(request.data))
         patient_id = request.data.get('patient_id')
         dentist_id = request.data.get('dentist_id')
+        sender_id = request.data.get('sender_id')
         text = request.data.get('text', 'Initial Message Text')
         title = request.data.get('title', 'Initial Message Title')
-        attachments = request.FILES.getlist('attachments')  # List of uploaded files
+
 
         # Ensure both patient and dentist exist
         patient = Patients.objects.filter(id=patient_id).first()
         dentist = Dentists.objects.filter(id=dentist_id).first()
 
-        if not patient or not dentist:
+        is_patient = Patients.objects.filter(id=sender_id).exists()  # Check if sender_id exists in Patients
+        is_dentist = Dentists.objects.filter(id=sender_id).exists()  #
+
+        if not patient or not dentist or (not is_patient and not is_dentist):
             return Response(
                 {'error': 'Invalid patient or dentist ID'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        sender_type = 'Patient' if is_patient else 'Dentist'
+
+
         # Create the message
         message = Messages.objects.create(
             patient=patient,
             dentist=dentist,
+            sender_id=sender_id,
+            sender_type=sender_type,
             text=text,
             title=title,
         )
 
         # Save attachments if provided
-        for attachment in attachments:
+        #for attachment in attachments:
             # Save the file and determine its path
-            path = default_storage.save(f"uploads/{attachment.name}", ContentFile(attachment.read()))
-            full_path = os.path.join(settings.MEDIA_ROOT, path)
-            file_url = default_storage.url(path)
+         #   path = default_storage.save(f"uploads/{attachment.name}", ContentFile(attachment.read()))
+         #   full_path = os.path.join(settings.MEDIA_ROOT, path)
+         #   file_url = default_storage.url(path)
 
             # Create RAFile for each attachment
-            RAFile.objects.create(
-                file=path,
-                title=os.path.splitext(attachment.name)[0],  # File name without extension
-                type=attachment.content_type,  # MIME type of the file
-                message=message,  # Associate with the created message
-                path=full_path,  # Full path to the file
-                src=file_url,  # Publicly accessible URL
-            )
+          #  RAFile.objects.create(
+         #       file=path,
+          #      title=os.path.splitext(attachment.name)[0],  # File name without extension
+         #       type=attachment.content_type,  # MIME type of the file
+          #      message=message,  # Associate with the created message
+          #      path=full_path,  # Full path to the file
+          #      src=file_url,  # Publicly accessible URL
+         #   )
 
         return Response(
             MessagesSerializer(message).data,

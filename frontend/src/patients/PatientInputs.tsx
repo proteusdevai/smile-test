@@ -67,7 +67,7 @@ const PatientIdentityInputs = () => {
 
 const PatientPersonalInformationInputs = () => {
     const { getValues, setValue } = useFormContext();
-
+    console.info('HOW ABOUT NOW PATIENT');
     // set first and last name based on email
     const handleEmailChange = (email: string) => {
         const { first_name, last_name } = getValues();
@@ -122,14 +122,7 @@ const PatientMiscInputs = () => {
                 helperText={false}
             />
             <BooleanInput source="has_newsletter" helperText={false} />
-            <ReferenceInput
-                reference="dentist"
-                source="dentist_id"
-                sort={{ field: 'last_name', order: 'ASC' }}
-                filter={{
-                    'disabled@neq': true,
-                }}
-            >
+            <ReferenceInput reference="dentists" source="dentist_id">
                 <SelectInput
                     helperText={false}
                     label="Dentist"
@@ -141,5 +134,7 @@ const PatientMiscInputs = () => {
     );
 };
 
-const dentistOptionRenderer = (choice: Dentist) =>
-    `${choice.first_name} ${choice.last_name}`;
+const dentistOptionRenderer = (choice: Dentist) => {
+    console.info('Dentist Option', choice);
+    return `${choice.first_name} ${choice.last_name}`;
+};

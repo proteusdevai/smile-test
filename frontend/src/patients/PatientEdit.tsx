@@ -14,12 +14,13 @@ import { Patient } from '../types';
 
 export const PatientEdit = () => (
     <EditBase redirect="show">
-        <ContactEditContent />
+        <PatientEditContent />
     </EditBase>
 );
 
-const ContactEditContent = () => {
+const PatientEditContent = () => {
     const { isPending, record } = useEditContext<Patient>();
+    console.info('EDITING A PAITENT');
     if (isPending || !record) return null;
     return (
         <Box mt={2} display="flex">

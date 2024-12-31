@@ -13,8 +13,10 @@ export const TasksIterator = ({
     sx?: SxProps;
 }) => {
     const { data, error, isPending } = useListContext();
+    console.info('TRYING TO PULL PATIENT SPECIFIC TASKS');
     if (isPending || error || data.length === 0) return null;
-
+    console.info('TRYING TO PULL PATIENT ccccc SPECIFIC TASKS');
+    console.info('HERE IS DATA: ', JSON.stringify(data, null, 2));
     // Keep only tasks that are not done or done less than 5 minutes ago
     const tasks = data.filter(
         task =>
@@ -28,7 +30,7 @@ export const TasksIterator = ({
     return (
         <List dense sx={sx}>
             {tasks.map(task => (
-                <Task task={task} showContact={showPatient} key={task.id} />
+                <Task task={task} showPatient={showPatient} key={task.id} />
             ))}
         </List>
     );

@@ -80,14 +80,14 @@ const Header = () => {
                                 <Tab
                                     label={'Inbox'}
                                     component={Link}
-                                    to="/contacts"
-                                    value="/contacts"
+                                    to="/patients"
+                                    value="/patients"
                                 />
                                 <Tab
                                     label={'Consults'}
                                     component={Link}
-                                    to="/deals"
-                                    value="/deals"
+                                    to="/consults"
+                                    value="/consults"
                                 />
                             </Tabs>
                         </Box>

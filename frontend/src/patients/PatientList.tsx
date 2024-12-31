@@ -19,7 +19,6 @@ import {
     useListContext,
 } from 'react-admin';
 
-
 import { PatientEmpty } from './PatientEmpty';
 import { PatientListContent } from './PatientListContent';
 import { PatientListFilter } from './PatientListFilter';
@@ -30,13 +29,13 @@ export const PatientList = () => {
     if (!identity) return null;
 
     return (
-        <ListBase perPage={25} sort={{ field: 'last_seen', order: 'DESC' }}>
-            <ContactListLayout />
+        <ListBase perPage={25}>
+            <PatientListLayout />
         </ListBase>
     );
 };
 
-const ContactListLayout = () => {
+const PatientListLayout = () => {
     const { data, isPending, filterValues } = useListContext();
     const { identity } = useGetIdentity();
 

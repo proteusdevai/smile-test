@@ -85,16 +85,36 @@ class PatientsSerializer(serializers.ModelSerializer):
 
 
 class ConsultsSerializer(serializers.ModelSerializer):
-    patient = PatientsSerializer(read_only=True)
-    dentist = DentistsSerializer(read_only=True)
+    dentist_id = serializers.UUIDField(write_only=True, required=True)
+    patient_id = serializers.UUIDField(write_only=True, required=True)
 
     class Meta:
         model = Consults
         fields = [
-            'id', 'category', 'stage', 'description', 'amount',
-            'created_at', 'updated_at', 'archived_at', 'expected_visit_date',
-            'patient', 'dentist', 'stage', 'index'
+            'id',
+            'dentist_id',  # Include this field explicitly
+            'patient_id',
+            'name',
+            'description',
+            'category',
+            'amount',
+            'expected_visit_date',
+            'stage',
+            'index',
         ]
+
+    def validate_dentist_id(self, value):
+        try:
+            dentist = Dentists.objects.get(id=value)
+        except Dentists.DoesNotExist:
+            raise serializers.ValidationError("Dentist with this ID does not exist.")
+        return dentist
+
+    def create(self, validated_data):
+        dentist = validated_data.pop('dentist_id')
+        validated_data['dentist'] = dentist
+        return super().create(validated_data)
+
 
 
 class ConsultNotesSerializer(serializers.ModelSerializer):
