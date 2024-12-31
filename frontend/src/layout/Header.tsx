@@ -28,12 +28,12 @@ const Header = () => {
     let currentPath: string | boolean = '/';
     if (!!matchPath('/', location.pathname)) {
         currentPath = '/';
-    } else if (!!matchPath('/contacts/*', location.pathname)) {
-        currentPath = '/contacts';
-    } else if (!!matchPath('/companies/*', location.pathname)) {
-        currentPath = '/companies';
-    } else if (!!matchPath('/deals/*', location.pathname)) {
-        currentPath = '/deals';
+    } else if (!!matchPath('/patients/*', location.pathname)) {
+        currentPath = '/patients';
+    } else if (!!matchPath('/dentists/*', location.pathname)) {
+        currentPath = '/dentists';
+    } else if (!!matchPath('/consults/*', location.pathname)) {
+        currentPath = '/consults';
     } else {
         currentPath = false;
     }

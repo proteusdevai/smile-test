@@ -55,11 +55,9 @@ export type Message = {
     id: number;
     patient_id: Identifier;
     dentist_id: Identifier;
-    sender_id: Identifier;
-    sender_type: string;
     text: string;
     title: string;
-    created_at: string;
+    date: string;
     attachments?: AttachmentMessage[];
 } & Pick<RaRecord, 'id'>;
 

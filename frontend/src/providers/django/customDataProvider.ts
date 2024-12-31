@@ -26,11 +26,11 @@ const customDataProvider: DataProvider = {
             ordering: `${order === 'ASC' ? '' : '-'}${field}`,
         };
         const url = `${apiUrl}/${resource}/?${stringify(query)}`;
-
+        console.info('GETLIST IS BEING CALLED');
         const { json } = await fetchJsonWithAuthJWTToken(url);
-
+        console.info(json);
         return {
-            data: json.results,
+            data: json.data,
             total: json.count,
         };
     },

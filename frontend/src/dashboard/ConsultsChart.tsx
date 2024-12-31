@@ -21,14 +21,9 @@ const threeMonthsAgo = new Date(
 export const ConsultsChart = () => {
     const { data, isPending } = useGetList<Consult>('consults', {
         pagination: { perPage: 66, page: 1 },
-        sort: {
-            field: 'created_at',
-            order: 'ASC',
-        },
-        filter: {
-            'created_at@gte': threeMonthsAgo,
-        },
     });
+    console.info('Received following data:', JSON.stringify({ data }, null, 2));
+
     const months = useMemo(() => {
         if (!data) return [];
         const consultsByMonth = data.reduce((acc, consult) => {
@@ -72,7 +67,7 @@ export const ConsultsChart = () => {
 
         return amountByMonth;
     }, [data]);
-
+    console.info(months);
     if (isPending)
         return (
             <>
@@ -89,6 +84,7 @@ export const ConsultsChart = () => {
         },
         { min: 0, max: 0 }
     );
+    console.info(range);
     return (
         <Stack>
             <Box display="flex" alignItems="center" mb={1}>

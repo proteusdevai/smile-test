@@ -8,7 +8,6 @@ import { useActivityLogContext } from './ActivityLogContext';
 import { DentistName } from '../dentists/DentistName';
 import { PatientName } from '../patients/PatientName';
 
-
 type ActivityLogMessageCreatedProps = {
     activity: ActivityMessageCreated;
 };
@@ -28,46 +27,23 @@ export function ActivityLogMessageCreated({
                         color="text.secondary"
                         flexGrow={1}
                     >
-                        <ReferenceField
-                            source="sender_id"
-                            reference={
-                                message.sender_type === 'dentist'
-                                    ? 'dentists'
-                                    : 'patients'
-                            }
-                            record={message}
-                            link={false}
-                        >
-                            {message.sender_type === 'dentist' ? (
-                                <DentistName />
-                            ) : (
-                                <PatientName />
-                            )}
-                        </ReferenceField>
+                        <>
+                            Dentist <strong>{message.dentist_id}</strong>
+                        </>{' '}
                         sent a message to{' '}
-                        <ReferenceField
-                            source="receiver_id"
-                            reference={
-                                message.sender_type === 'patient'
-                                    ? 'patients'
-                                    : 'dentists'
-                            }
-                            record={message}
-                            link={false}
-                        >
-                            {message.sender_type === 'dentist' ? (
-                                <DentistName />
-                            ) : (
-                                <PatientName />
-                            )}
-                        </ReferenceField>
-                        {' on '}
-                        <RelativeDate date={activity.date} />
+                        <>
+                            Patient <strong>{message.patient_id}</strong>
+                        </>{' '}
+                        on <RelativeDate date={message.date} />
+                        <br />
+                        <>
+                            <strong>{message.title}</strong>
+                        </>
                     </Typography>
                 </>
             }
-            text={message.text}
-            attachments={message.attachments}
+            text={message.text || 'No text provided'} // Display the message text, fallback to "No text provided"
+            attachments={message.attachments || []} // Ensure attachments fallback to an empty array
         />
     );
 }

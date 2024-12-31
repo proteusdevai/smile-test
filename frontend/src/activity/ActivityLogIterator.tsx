@@ -61,20 +61,10 @@ export function ActivityLogIterator({
 }
 
 function ActivityItem({ activity }: { activity: Activity }) {
-    if (activity.type === PATIENT_CREATED) {
-        return <ActivityLogPatientCreated activity={activity} />;
-    }
-
+    console.info('Gettting activity type here....');
+    console.info('Activities:', JSON.stringify(activity, null, 2));
     if (activity.type === MESSAGE_CREATED) {
         return <ActivityLogMessageCreated activity={activity} />;
-    }
-
-    if (activity.type === CONSULT_CREATED) {
-        return <ActivityLogConsultCreated activity={activity} />;
-    }
-
-    if (activity.type === CONSULT_NOTE_CREATED) {
-        return <ActivityLogConsultNoteCreated activity={activity} />;
     }
 
     return null;

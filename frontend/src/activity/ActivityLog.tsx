@@ -13,14 +13,13 @@ type ActivityLogProps = {
 };
 
 export function ActivityLog({
-    patientId,
-    pageSize = 20,
+    pageSize = 10,
     context = 'all',
 }: ActivityLogProps) {
     const { identity } = useGetIdentity();
     const dataProvider = useDataProvider<AppDataProvider>();
     const { data, isPending, error } = useQuery({
-        queryKey: ['activityLog', patientId],
+        queryKey: ['activityLog'],
         queryFn: () => {
             if (!identity) {
                 throw new Error('User is not authenticated');
@@ -55,6 +54,7 @@ export function ActivityLog({
     }
 
     if (error) {
+        console.info(error);
         return <Alert severity="error">Failed to load activity log</Alert>;
     }
 

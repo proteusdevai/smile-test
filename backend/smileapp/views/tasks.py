@@ -7,7 +7,9 @@ from smileapp.filters import  TasksFilter
 from smileapp.permissions import IsDentist, IsOwnerDentistOfResource
 from .utils import get_user_dentist
 
+import logging
 
+logger = logging.getLogger(__name__)
 
 class TasksViewSet(viewsets.ModelViewSet):
     """Only the dentist who owns the task can see it."""
@@ -18,8 +20,12 @@ class TasksViewSet(viewsets.ModelViewSet):
 
 
     def get_queryset(self):
-        dentist = get_user_dentist(self.request.user)
-        return Tasks.objects.filter(dentist=dentist)
+        logger.info('GETTING A TASK LIST REQUEST')
 
+        dentist = get_user_dentist(self.request.user)
+        logger.info(dentist.id)
+        tasks = Tasks.objects.filter(dentist=dentist)
+        logger.info(tasks.count())
+        return tasks
 
 

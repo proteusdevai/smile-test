@@ -12,12 +12,65 @@ from .models import (
     RAFile
 )
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Serializer for the User model
 class UserSerializer(serializers.ModelSerializer):
+    associated_id = serializers.SerializerMethodField()
+    email = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name']
+        fields = ['email', 'first_name', 'last_name', 'associated_id']
+
+    def get_associated_id(self, obj):
+        logger.info(f"User ID: {obj.id}")
+        logger.info(f"Patient: {getattr(obj, 'patients', None)}")
+        logger.info(f"Dentist: {getattr(obj, 'dentists', None)}")
+
+        if getattr(obj, 'patients', None):
+            return obj.patients.id
+        elif getattr(obj, 'dentists', None):
+            return obj.dentists.id
+        return None
+
+    def get_first_name(self, obj):
+        logger.info(f"User ID: {obj.id}")
+        logger.info(f"Patient: {getattr(obj, 'patients', None)}")
+        logger.info(f"Dentist: {getattr(obj, 'dentists', None)}")
+
+        if getattr(obj, 'patients', None):
+            return obj.patients.first_name
+        elif getattr(obj, 'dentists', None):
+            return obj.dentists.first_name
+        return obj.first_name
+
+    def get_last_name(self, obj):
+        logger.info(f"User ID: {obj.id}")
+        logger.info(f"Patient: {getattr(obj, 'patients', None)}")
+        logger.info(f"Dentist: {getattr(obj, 'dentists', None)}")
+
+        if getattr(obj, 'patients', None):
+            return obj.patients.last_name
+        elif getattr(obj, 'dentists', None):
+            return obj.dentists.last_name
+        return obj.last_name
+
+    def get_email(self, obj):
+        logger.info(f"User ID: {obj.id}")
+        logger.info(f"Patient: {getattr(obj, 'patients', None)}")
+        logger.info(f"Dentist: {getattr(obj, 'dentists', None)}")
+
+        if getattr(obj, 'patients', None):
+            return obj.patients.email
+        elif getattr(obj, 'dentists', None):
+            return obj.dentists.email
+        return obj.email
+
 
 class DentistsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,8 +145,6 @@ class RAFileSerializer(serializers.ModelSerializer):
         read_only_fields = ['src', 'path']  # These fields will be auto-calculated
 
 class MessagesSerializer(serializers.ModelSerializer):
-    attachements = RAFileSerializer(read_only=True, many=True)
-
     class Meta:
         model = Messages
-        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'attachments']
+        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date']

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # ViewSet for User
 class UsersViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.select_related('patients', 'dentists').all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
@@ -22,31 +22,28 @@ class UsersViewSet(viewsets.ModelViewSet):
 
         if user_id == 'me':
             # Return the authenticated user
-            user = request.user
+            user = User.objects.select_related('patients', 'dentists').get(id=request.user.id)
             serialized_user = UserSerializer(user).data
-            logger.info(f"Returning authenticated user: {serialized_user}")
+
             return Response(serialized_user)
 
         elif user_id:
             # Try fetching a specific user by ID
             try:
-                user = User.objects.get(id=user_id)
+                user = User.objects.select_related('patients', 'dentists').get(id=user_id)
                 serialized_user = UserSerializer(user).data
-                logger.info(f"Returning user by ID: {serialized_user}")
+
+
                 return Response(serialized_user)
             except User.DoesNotExist:
                 logger.warning(f"User with ID {user_id} not found.")
-                return Response(
-                    {"detail": "User not found."},
-                    status=404,
-                )
+                return Response({"detail": "User not found."}, status=404)
 
         # Default: Return all users (optional, based on your use case)
         logger.info("Returning all users (default behavior).")
-        users = User.objects.all()
-        serialized_users = UserSerializer(users, many=True).data
+        users = User.objects.select_related('patients', 'dentists').all()
+        serialized_users = UserSerializer(users).data
         return Response(serialized_users)
-
 
     def retrieve(self, request, pk=None):
         logger.info(f"UsersViewSet was queried for user ID: {pk}")

@@ -9,13 +9,7 @@ import { Link, Stack, Typography } from '@mui/material';
 
 import { TasksIterator } from '../tasks/TasksIterator';
 
-export const TasksListFilter = ({
-    title,
-    filter,
-}: {
-    title: string;
-    filter: any;
-}) => {
+export const TasksListFilter = ({ title }: { title: string }) => {
     const { identity } = useGetIdentity();
 
     const {
@@ -25,14 +19,16 @@ export const TasksListFilter = ({
     } = useGetList(
         'tasks',
         {
-            pagination: { page: 1, perPage: 100 },
-            sort: { field: 'due_date', order: 'ASC' },
             filter: {
-                ...filter,
-                sales_id: identity?.id,
+                dentist_id: identity?.id,
             },
         },
         { enabled: !!identity }
+    );
+
+    console.info(
+        'Received following tasks:',
+        JSON.stringify({ tasks, total }, null, 2)
     );
 
     const listContext = useList({
@@ -42,7 +38,6 @@ export const TasksListFilter = ({
         perPage: 5,
     });
 
-    if (isPending || !tasks || !total) return null;
 
     return (
         <Stack>

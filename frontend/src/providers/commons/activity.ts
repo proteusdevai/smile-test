@@ -17,22 +17,21 @@ export async function getActivityLog(
         throw new Error('Need an identity to fetch activity logs.');
     }
 
-    const dentistId = identity;
-
+    const dentistId = identity.id;
+    console.info('Trying to fetch activities now.');
+    console.info(dentistId);
     // Filter for messages where the dentist is involved
     const messageFilter = {
         or: [
             { dentist_id: dentistId }, // Messages sent to the dentist
-            { sender_id: dentistId, sender_type: 'dentist' }, // Messages sent by the dentist
         ],
     };
 
     // Fetch messages
     const { data: messages } = await dataProvider.getList<Message>('messages', {
         filter: messageFilter,
-        pagination: { page: 1, perPage: 250 },
-        sort: { field: 'created_at', order: 'DESC' },
     });
+    console.info('Messages:', JSON.stringify(messages, null, 2));
 
     // Map messages to the Activity type
     return messages.map(

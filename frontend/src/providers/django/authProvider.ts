@@ -83,10 +83,11 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
             );
 
             // @ts-ignore
-            const { id, first_name, last_name, email } = response.json;
+            const { associated_id, first_name, last_name, email } =
+                response.json;
             console.info('Getting identity: ');
-            console.info(id, first_name, email);
-            return { id, first_name, last_name, email }; // Identity object
+            console.info(associated_id, first_name, email);
+            return { id: associated_id, first_name, last_name, email }; // Identity object
         },
     };
 }

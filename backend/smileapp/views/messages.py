@@ -12,6 +12,10 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 import os
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 class MessagesViewSet(viewsets.ModelViewSet):
     """Only the participant of a message (dentist or patient) can see it."""
     serializer_class = MessagesSerializer
@@ -22,16 +26,18 @@ class MessagesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Return only messages for the logged-in dentist or patient."""
         user = self.request.user
-        dentist = getattr(user, 'dentist', None)  # Get dentist if the user is a dentist
-        patient = getattr(user, 'patient', None)  # Get patient if the user is a patient
-
-        if dentist:
+        dentists = getattr(user, 'dentists', None)  # Get dentist if the user is a dentist
+        patients = getattr(user, 'patients', None)  # Get patient if the user is a patient
+        logger.info('Trying to pull messages for dentist with id: {}'.format(user.id))
+        if dentists:
             # If the user is a dentist, return messages where the dentist is the participant
-            return Messages.objects.filter(dentist=dentist).select_related('attachments')
+            messages =  Messages.objects.filter(dentist=dentists)
+            logger.info('Found {} messages for dentist with id: {}'.format(len(messages), user.id))
+            return messages
 
-        if patient:
+        if patients:
             # If the user is a patient, return messages where the patient is the participant
-            return Messages.objects.filter(patient=patient).select_related('attachments')
+            return Messages.objects.filter(patient=patients)
 
         # If the user is neither a dentist nor a patient, return an empty queryset
         return Messages.objects.none()

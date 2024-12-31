@@ -1,6 +1,6 @@
-export const defaultLogo = './logos/logo_atomic_crm.svg';
+export const defaultLogo = './logos/pristinesmiles_logo.png';
 
-export const defaultTitle = 'Smile App';
+export const defaultTitle = 'Pristine Smiles';
 
 export const defaultStages = [
     { value: 'opportunity', label: 'Opportunity' },
