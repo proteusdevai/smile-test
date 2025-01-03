@@ -2,13 +2,15 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-CONFIG_DIR = Path(__file__).resolve().parent
-BACKEND_DIR = CONFIG_DIR.parent
-ROOT_DIR = BACKEND_DIR.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+MEDIA_URL = '/uploads/'  # URL for accessing uploaded files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')  # Absolute path to store uploaded files
+SITE_ID=1
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 ROOT_URLCONF = 'config.urls'
 
-MEDIA_DIR = ROOT_DIR / "media"
-MEDIA_URL = "/media/"
 SECRET_KEY = 'uqhv@ebigb1_8*l$@jaa*r)ci4-gm-wx@o_np4+&$nx-h5-c^z'
 DEBUG = True
 
@@ -29,6 +31,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',  # Enable CORS
     'smileapp',
+'django.contrib.sites',
 ]
 
 MIDDLEWARE = [

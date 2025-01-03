@@ -185,10 +185,10 @@ export const dataProvider = withLifecycleCallbacks(
             beforeSave: async (data: Message, _, __) => {
                 if (data.attachments) {
                     for (const file of data.attachments) {
-                        //console.info('TRYING NOW');
                         const uploadResult = await uploadToBucket(file);
                         file.path = uploadResult.path;
                         file.src = uploadResult.url;
+                        file.id = uploadResult.id;
                     }
                 }
                 return data;
@@ -284,7 +284,7 @@ const uploadToBucket = async (file: RAFile) => {
         }
 
         // Use the returned path and URL
-        return { path: data.path, url: data.url };
+        return { path: data.path, url: data.url, id: data.id };
     } catch (error) {
         console.error('uploadToBucket.error', error);
         throw error; // Rethrow for higher-level handling

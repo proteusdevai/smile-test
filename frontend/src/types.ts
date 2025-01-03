@@ -127,6 +127,8 @@ export interface RAFile {
     path: string;
     rawFile: File;
     type?: string;
+    url?: string;
+    id?: number;
 }
 
 export type AttachmentMessage = RAFile;

@@ -2,6 +2,7 @@ import os
 import uuid
 
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -187,8 +188,13 @@ class RAFile(models.Model):
 
     def save(self, *args, **kwargs):
         # Automatically set `src` and `title` based on the uploaded file
-        if self.file and not self.title:
+        if self.file:
             self.title = os.path.splitext(self.file.name)[0]  # Get the file name without the extension
             self.path = os.path.join(settings.MEDIA_ROOT, self.file.name)
-            self.src = self.file.url
+            self.src = self.build_absolute_uri(self.file.url)
         super().save(*args, **kwargs)
+
+    def build_absolute_uri(self, relative_url):
+        # Construct the absolute URL based on the request
+        domain = getattr(settings, 'BACKEND_URL', 'http://localhost:8000')
+        return f"{domain}{relative_url}"

@@ -22,9 +22,7 @@ class RAFileView(APIView):
             return Response(
                 {
                     "message": "File uploaded successfully",
-                    "path": file_instance.path,  # Return the unique file path
-                    "id": file_instance.id,     # Optionally return the ID
-                    "url": file_instance.src,   # Return the file's URL
+                    "id": file_instance.id,
                 },
                 status=status.HTTP_201_CREATED,
             )

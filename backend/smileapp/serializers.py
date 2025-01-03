@@ -159,14 +159,33 @@ class PatientsSignupSerializer(serializers.Serializer):
 
 
 class RAFileSerializer(serializers.ModelSerializer):
+    src = serializers.SerializerMethodField()
+
     class Meta:
         model = RAFile
         fields = ['id', 'file', 'title', 'path', 'src', 'type', 'message']
         read_only_fields = ['path', 'src', 'message']
 
+    def get_src(self, obj):
+        request = self.context.get('request')
+        if request:
+            logger.info(f"Requested src: {request.path}")
+            return request.build_absolute_uri(obj.src)
+        return obj.src
+
 class MessagesSerializer(serializers.ModelSerializer):
     # Include RAFileSerializer as a nested field
-    files = RAFileSerializer(many=True, read_only=True)
+    attachments = serializers.SerializerMethodField()
     class Meta:
         model = Messages
-        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'sender_type', 'files']
+        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'sender_type', 'attachments']
+
+    def get_attachments(self, obj):
+        # Retrieve related files and serialize them as attachments
+        files = RAFile.objects.filter(message=obj)
+        return RAFileSerializer(files, many=True, context=self.context).data
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request  # Pass the request to the serializer context
+        return context
