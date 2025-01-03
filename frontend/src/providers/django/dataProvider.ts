@@ -265,13 +265,22 @@ const uploadToBucket = async (file: RAFile) => {
             body: formData,
         });
 
-        const data = await response.json();
-        if (!response.ok) {
-            console.error('uploadToBucket.error', data);
-            throw new Error('File upload failed');
+        // Safely parse JSON if the response body is not empty
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonError) {
+            console.warn('Response is not valid JSON or empty', jsonError);
+            data = {}; // Default to an empty object if JSON parsing fails
         }
 
-        return { path: data.path, url: data.url }; // Use the returned path and URL
+        if (!response.ok) {
+            console.error('uploadToBucket.error', data);
+            throw new Error(data?.error || 'File upload failed');
+        }
+
+        // Use the returned path and URL
+        return { path: data.path, url: data.url };
     } catch (error) {
         console.error('uploadToBucket.error', error);
         throw error; // Rethrow for higher-level handling

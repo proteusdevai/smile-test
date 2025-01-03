@@ -83,6 +83,7 @@
     },
     "scripts": {
         "test": "vitest",
+        "clean": "rm -rf dist && rm -rf .cache && rm -rf build",
         "dev": "vite --force",
         "build": "tsc && vite build",
         "build-lib": "tsc && vite build --config vite.lib.config",

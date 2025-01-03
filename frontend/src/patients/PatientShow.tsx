@@ -36,10 +36,6 @@ const PatientShowContent = () => {
         resource: 'messages',
         perPage: 50,
     });
-    console.info(
-        'Received following messages:',
-        JSON.stringify({ messages, total }, null, 2)
-    );
 
     // Handle loading or empty states
     if (isLoading || isPending || !messages || messages.length === 0) {

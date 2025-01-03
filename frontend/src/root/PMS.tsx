@@ -12,6 +12,7 @@ import { deepmerge } from '@mui/utils';
 import { Route } from 'react-router';
 import { ForgotPasswordPage, SetPasswordPage } from 'ra-supabase';
 
+import CustomLayout from '../layout/CustomLayout';
 import { Layout } from '../layout/Layout';
 import { i18nProvider } from './i18nProvider';
 import patients from '../patients';
@@ -52,7 +53,7 @@ const defaultLightTheme = deepmerge(defaultTheme, {
             default: '#fafafb',
         },
         primary: {
-            main: '#2F68AC',
+            main: '#DEEFF5',
         },
     },
     components: {

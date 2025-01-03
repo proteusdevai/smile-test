@@ -61,8 +61,6 @@ export function ActivityLogIterator({
 }
 
 function ActivityItem({ activity }: { activity: Activity }) {
-    console.info('Gettting activity type here....');
-    console.info('Activities:', JSON.stringify(activity, null, 2));
     if (activity.type === MESSAGE_CREATED) {
         return <ActivityLogMessageCreated activity={activity} />;
     }

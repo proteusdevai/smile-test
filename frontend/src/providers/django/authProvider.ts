@@ -50,9 +50,8 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         },
 
         logout: () => {
-            console.info('REMOVING TOKENS LOGOUT....');
-            //localStorage.removeItem('access_token');
-            //localStorage.removeItem('refresh_token');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
             return Promise.resolve();
         },
 
@@ -65,7 +64,6 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         checkError: error => {
             const status = error.status;
             if (status === 401 || status === 403) {
-                console.info('REMOVING TOKENS ....');
                 localStorage.removeItem('access_token');
                 localStorage.removeItem('refresh_token');
                 return Promise.reject();
@@ -76,7 +74,6 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
         getPermissions: () => Promise.resolve(),
 
         getIdentity: async () => {
-            console.info('Hello worldy world');
             const response = await fetchJsonWithAuthJWTToken(
                 'http://localhost:8000/api/users/?id=me',
                 {}
@@ -107,7 +104,8 @@ export function createOptionsFromJWTToken() {
 export function fetchJsonWithAuthJWTToken(url: string, options: any = {}) {
     const new_options = Object.assign(createOptionsFromJWTToken(), options);
     // Log the full new_options object
-    console.log('Options after merging:', JSON.stringify(new_options, null, 2));
+    console.log('Did we:', JSON.stringify(new_options, null, 2));
+    console.log(url);
     return fetchUtils.fetchJson(url, new_options);
 }
 

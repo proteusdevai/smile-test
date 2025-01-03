@@ -41,7 +41,6 @@ export const PatientListContent = () => {
         return null;
     }
     const now = Date.now();
-
     return (
         <>
             <List dense>

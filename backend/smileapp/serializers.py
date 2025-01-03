@@ -165,6 +165,8 @@ class RAFileSerializer(serializers.ModelSerializer):
         read_only_fields = ['src', 'path']  # These fields will be auto-calculated
 
 class MessagesSerializer(serializers.ModelSerializer):
+    # Include RAFileSerializer as a nested field
+    attachments = RAFileSerializer(many=True, read_only=True)
     class Meta:
         model = Messages
-        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date']
+        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'attachments']

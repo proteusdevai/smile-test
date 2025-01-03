@@ -67,7 +67,6 @@ const PatientIdentityInputs = () => {
 
 const PatientPersonalInformationInputs = () => {
     const { getValues, setValue } = useFormContext();
-    console.info('HOW ABOUT NOW PATIENT');
     // set first and last name based on email
     const handleEmailChange = (email: string) => {
         const { first_name, last_name } = getValues();
@@ -135,6 +134,5 @@ const PatientMiscInputs = () => {
 };
 
 const dentistOptionRenderer = (choice: Dentist) => {
-    console.info('Dentist Option', choice);
     return `${choice.first_name} ${choice.last_name}`;
 };

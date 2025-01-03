@@ -38,7 +38,6 @@ export const TasksListFilter = ({ title }: { title: string }) => {
         perPage: 5,
     });
 
-
     return (
         <Stack>
             <Typography variant="overline">{title}</Typography>
@@ -47,12 +46,12 @@ export const TasksListFilter = ({ title }: { title: string }) => {
                     <TasksIterator showPatient sx={{ pt: 0, pb: 0 }} />
                 </ListContextProvider>
             </ResourceContextProvider>
-            {total > listContext.perPage && (
+            {typeof total === 'number' && total > listContext.perPage && (
                 <Stack justifyContent="flex-end" direction="row">
                     <Link
                         href="#"
                         onClick={e => {
-                            listContext.setPerPage(listContext.perPage + 10);
+                            listContext.setPerPage(listContext.perPage + 5);
                             e.preventDefault();
                         }}
                         variant="body2"

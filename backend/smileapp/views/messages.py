@@ -1,20 +1,20 @@
-from django.core.files.storage import default_storage
+import logging
+import os
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from config import settings
-from smileapp.models import Messages, Patients, Dentists, RAFile
-from smileapp.serializers import MessagesSerializer
 from smileapp.filters import MessagesFilter
+from smileapp.models import Messages, Patients, Dentists, RAFile
 from smileapp.permissions import IsParticipantInMessage
-from rest_framework.permissions import IsAuthenticated
-from django_filters.rest_framework import DjangoFilterBackend
-import os
-
-import logging
+from smileapp.serializers import MessagesSerializer
 
 logger = logging.getLogger(__name__)
+
 
 class MessagesViewSet(viewsets.ModelViewSet):
     """Only the participant of a message (dentist or patient) can see it."""
@@ -31,7 +31,7 @@ class MessagesViewSet(viewsets.ModelViewSet):
         logger.info('Trying to pull messages for dentist with id: {}'.format(user.id))
         if dentists:
             # If the user is a dentist, return messages where the dentist is the participant
-            messages =  Messages.objects.filter(dentist=dentists)
+            messages = Messages.objects.filter(dentist=dentists)
             logger.info('Found {} messages for dentist with id: {}'.format(len(messages), user.id))
             return messages
 
@@ -42,7 +42,6 @@ class MessagesViewSet(viewsets.ModelViewSet):
         # If the user is neither a dentist nor a patient, return an empty queryset
         return Messages.objects.none()
 
-
     def create(self, request, *args, **kwargs):
         """Override create to handle initial message creation with attachments."""
         logger.info("Received request: {}".format(request.data))
@@ -51,7 +50,7 @@ class MessagesViewSet(viewsets.ModelViewSet):
         sender_id = request.data.get('sender_id')
         text = request.data.get('text', 'Initial Message Text')
         title = request.data.get('title', 'Initial Message Title')
-
+        attachments = request.FILES.getlist('attachments', [])
 
         # Ensure both patient and dentist exist
         patient = Patients.objects.filter(id=patient_id).first()
@@ -68,7 +67,6 @@ class MessagesViewSet(viewsets.ModelViewSet):
 
         sender_type = 'Patient' if is_patient else 'Dentist'
 
-
         # Create the message
         message = Messages.objects.create(
             patient=patient,
@@ -80,21 +78,21 @@ class MessagesViewSet(viewsets.ModelViewSet):
         )
 
         # Save attachments if provided
-        #for attachment in attachments:
+        for attachment in attachments:
             # Save the file and determine its path
-         #   path = default_storage.save(f"uploads/{attachment.name}", ContentFile(attachment.read()))
-         #   full_path = os.path.join(settings.MEDIA_ROOT, path)
-         #   file_url = default_storage.url(path)
+            path = default_storage.save(f"uploads/{attachment.name}", ContentFile(attachment.read()))
+            full_path = os.path.join(settings.MEDIA_ROOT, path)
+            file_url = default_storage.url(path)
 
             # Create RAFile for each attachment
-          #  RAFile.objects.create(
-         #       file=path,
-          #      title=os.path.splitext(attachment.name)[0],  # File name without extension
-         #       type=attachment.content_type,  # MIME type of the file
-          #      message=message,  # Associate with the created message
-          #      path=full_path,  # Full path to the file
-          #      src=file_url,  # Publicly accessible URL
-         #   )
+            RAFile.objects.create(
+                file=path,
+                title=os.path.splitext(attachment.name)[0],  # File name without extension
+                type=attachment.content_type,  # MIME type of the file
+                message=message,  # Associate with the created message
+                path=full_path,  # Full path to the file
+                src=file_url,  # Publicly accessible URL
+            )
 
         return Response(
             MessagesSerializer(message).data,

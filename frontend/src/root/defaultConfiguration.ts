@@ -1,6 +1,6 @@
 export const defaultLogo = './logos/pristinesmiles_logo.png';
 
-export const defaultTitle = 'Pristine Smiles';
+export const defaultTitle = '';
 
 export const defaultStages = [
     { value: 'opportunity', label: 'Opportunity' },
