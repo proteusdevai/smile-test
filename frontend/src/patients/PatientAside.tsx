@@ -38,10 +38,10 @@ export const PatientAside = ({ link = 'edit' }: { link?: 'edit' | 'show' }) => {
         },
     });
 
-    console.info(
-        'Received following tasks:',
-        JSON.stringify({ tasks, total }, null, 2)
-    );
+    // console.info(
+    //     'Received following tasks:',
+    //     JSON.stringify({ tasks, total }, null, 2)
+    // );
 
     const listContext = useList({
         data: tasks,

@@ -161,12 +161,12 @@ class PatientsSignupSerializer(serializers.Serializer):
 class RAFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = RAFile
-        fields = ['id', 'file', 'title', 'src', 'path', 'type']  # Include all metadata fields
-        read_only_fields = ['src', 'path']  # These fields will be auto-calculated
+        fields = ['id', 'file', 'title', 'path', 'src', 'type', 'message']
+        read_only_fields = ['path', 'src', 'message']
 
 class MessagesSerializer(serializers.ModelSerializer):
     # Include RAFileSerializer as a nested field
-    attachments = RAFileSerializer(many=True, read_only=True)
+    files = RAFileSerializer(many=True, read_only=True)
     class Meta:
         model = Messages
-        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'attachments']
+        fields = ['id', 'patient', 'dentist', 'text', 'title', 'date', 'sender_type', 'files']

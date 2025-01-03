@@ -58,6 +58,7 @@ export type Message = {
     text: string;
     title: string;
     date: string;
+    sender_type: string;
     attachments?: AttachmentMessage[];
 } & Pick<RaRecord, 'id'>;
 

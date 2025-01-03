@@ -42,12 +42,7 @@ const MessageCreateButton = ({ record }: { record: RaRecord<Identifier> }) => {
     const { refetch } = useListContext();
 
     if (!record || !identity) return null;
-    console.info('here is the record', JSON.stringify(record, null, 2));
-    const resetValues = {
-        created_at: getCurrentDate(),
-        text: null,
-        attachments: null,
-    };
+
 
     const handleSuccess = () => {
         reset(resetValues, { keepValues: false });

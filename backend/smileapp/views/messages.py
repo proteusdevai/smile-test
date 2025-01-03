@@ -31,13 +31,13 @@ class MessagesViewSet(viewsets.ModelViewSet):
         logger.info('Trying to pull messages for dentist with id: {}'.format(user.id))
         if dentists:
             # If the user is a dentist, return messages where the dentist is the participant
-            messages = Messages.objects.filter(dentist=dentists)
+            messages = Messages.objects.filter(dentist=dentists).order_by('-created_at').prefetch_related('files')
             logger.info('Found {} messages for dentist with id: {}'.format(len(messages), user.id))
             return messages
 
         if patients:
             # If the user is a patient, return messages where the patient is the participant
-            return Messages.objects.filter(patient=patients)
+            return Messages.objects.filter(patient=patients).order_by('-created_at').prefetch_related('files')
 
         # If the user is neither a dentist nor a patient, return an empty queryset
         return Messages.objects.none()
@@ -50,7 +50,7 @@ class MessagesViewSet(viewsets.ModelViewSet):
         sender_id = request.data.get('sender_id')
         text = request.data.get('text', 'Initial Message Text')
         title = request.data.get('title', 'Initial Message Title')
-        attachments = request.FILES.getlist('attachments', [])
+        attachments = request.FILES.get('attachments', [])
 
         # Ensure both patient and dentist exist
         patient = Patients.objects.filter(id=patient_id).first()
@@ -80,6 +80,7 @@ class MessagesViewSet(viewsets.ModelViewSet):
         # Save attachments if provided
         for attachment in attachments:
             # Save the file and determine its path
+            logger.info('Attachment: {}'.format(attachment))
             path = default_storage.save(f"uploads/{attachment.name}", ContentFile(attachment.read()))
             full_path = os.path.join(settings.MEDIA_ROOT, path)
             file_url = default_storage.url(path)

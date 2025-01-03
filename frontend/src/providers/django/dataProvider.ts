@@ -185,6 +185,7 @@ export const dataProvider = withLifecycleCallbacks(
             beforeSave: async (data: Message, _, __) => {
                 if (data.attachments) {
                     for (const file of data.attachments) {
+                        //console.info('TRYING NOW');
                         const uploadResult = await uploadToBucket(file);
                         file.path = uploadResult.path;
                         file.src = uploadResult.url;
@@ -260,8 +261,11 @@ const uploadToBucket = async (file: RAFile) => {
     formData.append('file', file.rawFile);
 
     try {
-        const response = await fetch('/api/upload/', {
+        const response = await fetch('http://localhost:8000/api/upload/', {
             method: 'POST',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`, // Replace with your token logic
+            },
             body: formData,
         });
 

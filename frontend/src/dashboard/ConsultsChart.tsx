@@ -22,7 +22,7 @@ export const ConsultsChart = () => {
     const { data, isPending } = useGetList<Consult>('consults', {
         pagination: { perPage: 66, page: 1 },
     });
-    console.info('Received following data:', JSON.stringify({ data }, null, 2));
+    //console.info('Received following data:', JSON.stringify({ data }, null, 2));
 
     const months = useMemo(() => {
         if (!data) return [];

@@ -38,18 +38,32 @@ const PatientShowContent = () => {
     });
 
     // Handle loading or empty states
-    if (isLoading || isPending || !messages || messages.length === 0) {
+    if (
+        isLoading ||
+        isPending ||
+        !messages ||
+        !record ||
+        messages.length === 0
+    ) {
         return (
             <Box mt={2} mb={2} display="flex">
                 <Box flex="1">
                     <Card>
                         <CardContent>
-                            <Typography variant="body2">
-                                No messages found.
-                            </Typography>
+                            <Box ml={2} flex="1">
+                                <Typography variant="h5">
+                                    {record.first_name} {record.last_name}
+                                </Typography>
+                            </Box>
+                            <RecordContextProvider value={record}>
+                                <ListContextProvider value={listContext}>
+                                    <MessagesIterator />
+                                </ListContextProvider>
+                            </RecordContextProvider>
                         </CardContent>
                     </Card>
                 </Box>
+                <PatientAside />
             </Box>
         );
     }
@@ -67,7 +81,7 @@ const PatientShowContent = () => {
                         </Box>
                         <RecordContextProvider value={record}>
                             <ListContextProvider value={listContext}>
-                                <MessagesIterator />
+                                <MessagesIterator patient={record} />
                             </ListContextProvider>
                         </RecordContextProvider>
                     </CardContent>

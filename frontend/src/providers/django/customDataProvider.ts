@@ -35,20 +35,28 @@ const customDataProvider: DataProvider = {
     },
 
     getOne: async (resource: string, params: GetOneParams) => {
-        const url = `${apiUrl}/${resource}/${params.id}/`;
+        console.info('CALLED ONE');
+        console.info(apiUrl, resource, params.id);
+        const url = `${apiUrl}/${resource}/${params.id}/?timestamp=${new Date().getTime()}`;
+        //console.info(url);
         const { json } = await fetchJsonWithAuthJWTToken(url);
-
+        console.info('HERE IS THE RETURN', JSON.stringify(json));
+        //console.info('COMPLETED?');
         return { data: json };
     },
 
     getMany: async (resource: string, params: GetManyParams) => {
+        //console.info('CALLED MANY');
+        //console.info(apiUrl, resource);
         const responses = await Promise.all(
             params.ids.map(id =>
-                fetchJsonWithAuthJWTToken(`${apiUrl}/${resource}/${id}/`)
+                fetchJsonWithAuthJWTToken(
+                    `${apiUrl}/${resource}/${id}/?timestamp=${new Date().getTime()}`
+                )
             )
         );
         const data = responses.map(({ json }) => json);
-
+        //console.info('HERE IS THE RETURN', JSON.stringify(data));
         return { data };
     },
 
@@ -67,9 +75,9 @@ const customDataProvider: DataProvider = {
             ordering: `${order === 'ASC' ? '' : '-'}${field}`,
         };
         const url = `${apiUrl}/${resource}/?${stringify(query)}`;
-        console.info('GET MANY REF');
+        //console.info('GET MANY REF');
         const { json } = await fetchJsonWithAuthJWTToken(url);
-        console.info(json.data);
+        //console.info(json.data);
         return {
             data: json.data,
             total: json.count,

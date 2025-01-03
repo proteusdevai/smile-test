@@ -3,9 +3,16 @@ import { Box, Divider, Stack } from '@mui/material';
 import { useListContext, useGetIdentity, useRecordContext } from 'react-admin';
 
 import { Message } from './Message';
+import { Patient } from '../types';
 import { MessageCreate } from './MessageCreate';
 
-export const MessagesIterator = ({ showStatus }: { showStatus?: boolean }) => {
+export const MessagesIterator = ({
+    patient,
+    showStatus,
+}: {
+    patient?: Patient;
+    showStatus?: boolean;
+}) => {
     const { data, error, isPending } = useListContext(); // Fetch the messages
     const { identity } = useGetIdentity(); // Get logged-in user's identity
     const record = useRecordContext(); // The record for the receiver
@@ -25,6 +32,7 @@ export const MessagesIterator = ({ showStatus }: { showStatus?: boolean }) => {
                         <React.Fragment key={index}>
                             <Message
                                 message={message}
+                                patient={patient}
                                 isLast={index === data.length - 1}
                                 key={index}
                             />

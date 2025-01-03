@@ -9,14 +9,14 @@ export const LoginPage = () => {
     useEffect(() => {
         const checkServerStatus = async () => {
             try {
-                console.info('Checking server health at /api/health-check/...');
+                //console.info('Checking server health at /api/health-check/...');
                 const response = await fetch('/api/health-check/');
-                console.info(
-                    'Received response from /api/health-check/:',
-                    response
-                );
+                //console.info(
+                //    'Received response from /api/health-check/:',
+                //    response
+               // );
                 if (response.ok) {
-                    console.info('Server is up and running.');
+                    //console.info('Server is up and running.');
                     setIsServerUp(true);
                 } else {
                     setIsServerUp(false);

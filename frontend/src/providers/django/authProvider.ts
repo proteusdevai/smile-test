@@ -12,22 +12,22 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
 
     return {
         login: async ({ email, password }) => {
-            console.info('Sending a login request.');
+            //console.info('Sending a login request.');
             const header = new Headers({ 'Content-Type': 'application/json' });
             const request = new Request(opts.obtainAuthTokenUrl, {
                 method: 'POST',
                 body: JSON.stringify({ username: email, password }),
                 headers: header,
             });
-            console.info('Sending requsest with header:');
-            console.info('Logging all headers in the request:');
+            //console.info('Sending requsest with header:');
+            //console.info('Logging all headers in the request:');
             for (const [key, value] of request.headers.entries()) {
                 console.info(`${key}: ${value}`);
             }
             const response = await fetch(request);
             // Check if the response is successfulSt
             if (response.ok) {
-                console.info('Received a valid login.');
+                //console.info('Received a valid login.');
                 const responseJSON = await response.json(); // Parse JSON
                 localStorage.setItem('access_token', responseJSON.access);
                 localStorage.setItem('refresh_token', responseJSON.refresh);
@@ -82,8 +82,8 @@ function jwtTokenAuthProvider(options: Options = {}): AuthProvider {
             // @ts-ignore
             const { associated_id, first_name, last_name, email } =
                 response.json;
-            console.info('Getting identity: ');
-            console.info(associated_id, first_name, email);
+            //console.info('Getting identity: ');
+            //console.info(associated_id, first_name, email);
             return { id: associated_id, first_name, last_name, email }; // Identity object
         },
     };
@@ -104,7 +104,7 @@ export function createOptionsFromJWTToken() {
 export function fetchJsonWithAuthJWTToken(url: string, options: any = {}) {
     const new_options = Object.assign(createOptionsFromJWTToken(), options);
     // Log the full new_options object
-    console.log('Did we:', JSON.stringify(new_options, null, 2));
+    //console.log('Did we:', JSON.stringify(new_options, null, 2));
     console.log(url);
     return fetchUtils.fetchJson(url, new_options);
 }

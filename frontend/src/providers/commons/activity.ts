@@ -18,8 +18,8 @@ export async function getActivityLog(
     }
 
     const dentistId = identity.id;
-    console.info('Trying to fetch activities now.');
-    console.info(dentistId);
+    //console.info('Trying to fetch activities now.');
+    //console.info(dentistId);
     // Filter for messages where the dentist is involved
     const messageFilter = {
         or: [
@@ -31,7 +31,7 @@ export async function getActivityLog(
     const { data: messages } = await dataProvider.getList<Message>('messages', {
         filter: messageFilter,
     });
-    console.info('Messages:', JSON.stringify(messages, null, 2));
+    //console.info('Messages:', JSON.stringify(messages, null, 2));
 
     // Map messages to the Activity type
     return messages.map(
@@ -41,7 +41,7 @@ export async function getActivityLog(
             dentist_id: message.dentist_id,
             patient_id: message.patient_id,
             message,
-            date: message.created_at,
+            date: message.date,
         })
     );
 }

@@ -26,10 +26,6 @@ export const TasksListFilter = ({ title }: { title: string }) => {
         { enabled: !!identity }
     );
 
-    console.info(
-        'Received following tasks:',
-        JSON.stringify({ tasks, total }, null, 2)
-    );
 
     const listContext = useList({
         data: tasks,

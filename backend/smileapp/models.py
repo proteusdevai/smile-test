@@ -86,6 +86,8 @@ class Consults(models.Model):
 
 
 class Messages(models.Model):
+
+
     id = models.BigAutoField(primary_key=True)
     patient = models.ForeignKey(Patients, on_delete=models.CASCADE, related_name="messages")
     dentist = models.ForeignKey(Dentists, on_delete=models.CASCADE, related_name="messages")
@@ -106,6 +108,7 @@ class Messages(models.Model):
                 name="text_required",
             ),
         ]
+        ordering = ['-created_at']
 
     def clean(self):
         """Ensure that text is provided."""
@@ -170,19 +173,21 @@ class Tasks(models.Model):
     def __str__(self):
         return f"Task {self.id} for Patient {self.patient_id}"
 
+    class Meta:
+        ordering = ['due_date']  # Order by due date, earli
 
 class RAFile(models.Model):
-    id = models.BigAutoField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.BigAutoField(primary_key=True, editable=False)
     file = models.FileField(upload_to='uploads/')  # The actual file stored in the backend
-    title = models.CharField(max_length=255)  # The descriptive title of the file
-    path = models.CharField(max_length=255)
-    src = models.URLField()  # URL for accessing the file
+    title = models.CharField(max_length=255, blank=True)  # The descriptive title of the file
+    path = models.CharField(max_length=255, blank=True)
+    src = models.URLField(blank=True)  # URL for accessing the file
     type = models.CharField(max_length=50, blank=True, null=True)  # MIME type
-    message = models.ForeignKey('Messages', on_delete=models.CASCADE, related_name='files')
+    message = models.ForeignKey('Messages', on_delete=models.CASCADE, related_name='files', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         # Automatically set `src` and `title` based on the uploaded file
-        if self.file:
+        if self.file and not self.title:
             self.title = os.path.splitext(self.file.name)[0]  # Get the file name without the extension
             self.path = os.path.join(settings.MEDIA_ROOT, self.file.name)
             self.src = self.file.url

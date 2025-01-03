@@ -54,7 +54,7 @@ export function ActivityLog({
     }
 
     if (error) {
-        console.info(error);
+        //console.info(error);
         return <Alert severity="error">Failed to load activity log</Alert>;
     }
 

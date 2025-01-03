@@ -1,4 +1,3 @@
-
 import ContentSave from '@mui/icons-material/Save';
 import {
     Box,
@@ -10,7 +9,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import {
-    Form,
+    Form, Link,
     ReferenceField,
     useDelete,
     useNotify,
@@ -20,16 +19,18 @@ import {
 } from 'react-admin';
 import { FieldValues, SubmitHandler } from 'react-hook-form';
 
-import { Message as MessageData } from '../types';
+import { Message as MessageData, Patient } from '../types';
 import { MessageAttachments } from './MessageAttachments';
 import { MessageInputs } from './MessageInputs';
 
 export const Message = ({
     showStatus,
     message,
+    patient,
 }: {
     showStatus?: boolean;
     message: MessageData;
+    patient: Patient;
     isLast: boolean;
 }) => {
     const [isHover, setHover] = useState(false);
@@ -85,59 +86,35 @@ export const Message = ({
             <Stack direction="row" spacing={1} alignItems="center" width="100%">
                 <Typography color="text.secondary" variant="body2">
                     <ReferenceField
-                        source="sender_id"
+                        source={
+                            message.sender_type === 'Patient'
+                                ? 'patient'
+                                : 'dentist'
+                        }
                         reference={
-                            message.sender_type === 'patient'
+                            message.sender_type === 'Patient'
                                 ? 'patients'
                                 : 'dentists'
                         }
                         link="show"
                     >
-                        {message.sender_type === 'patient' ? (
-                            <WithRecord
-                                render={record =>
-                                    `${record.first_name} ${record.last_name}`
-                                }
-                            />
-                        ) : (
-                            <WithRecord
-                                render={record =>
-                                    `${record.first_name} ${record.last_name}`
-                                }
-                            />
-                        )}
+                        <WithRecord
+                            render={record => {
+                                return `${record.first_name} ${record.last_name}`;
+                            }}
+                        />
                     </ReferenceField>{' '}
-                    sent a message to{' '}
-                    <ReferenceField
-                        source="receiver_id"
-                        reference={
-                            message.sender_type === 'patient'
-                                ? 'dentists'
-                                : 'patients'
-                        }
-                        link="show"
-                    >
-                        {message.sender_type === 'patient' ? (
-                            <WithRecord
-                                render={record =>
-                                    `${record.first_name} ${record.last_name}`
-                                }
-                            />
-                        ) : (
-                            <WithRecord
-                                render={record =>
-                                    `${record.first_name} ${record.last_name}`
-                                }
-                            />
-                        )}
-                    </ReferenceField>{' '}
+                    sent a message to
+                    <Link to={`/patients/${patient.id}/show`}>
+                        {patient.first_name} {patient.last_name}
+                    </Link>{' '}
                     on{' '}
                     <Typography
                         color="textSecondary"
                         variant="body2"
                         component="span"
                     >
-                        {new Date(message.created_at).toLocaleString()}
+                        {new Date(message.date).toLocaleString()}
                     </Typography>
                 </Typography>
             </Stack>

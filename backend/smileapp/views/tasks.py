@@ -67,7 +67,7 @@ class TasksViewSet(viewsets.ModelViewSet):
 
         dentist = get_user_dentist(self.request.user)
         logger.info(dentist.id)
-        tasks = Tasks.objects.filter(dentist=dentist)
+        tasks = Tasks.objects.filter(dentist=dentist).order_by('-due_date')
         logger.info(tasks.count())
         return tasks
 
