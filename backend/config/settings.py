@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 MEDIA_URL = '/uploads/'  # URL for accessing uploaded files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')  # Absolute path to store uploaded files

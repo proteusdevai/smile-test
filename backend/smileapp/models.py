@@ -179,7 +179,7 @@ class Tasks(models.Model):
 
 class RAFile(models.Model):
     id = models.BigAutoField(primary_key=True, editable=False)
-    file = models.FileField(upload_to='uploads/')  # The actual file stored in the backend
+    file = models.FileField()  # The actual file stored in the backend
     title = models.CharField(max_length=255, blank=True)  # The descriptive title of the file
     path = models.CharField(max_length=255, blank=True)
     src = models.URLField(blank=True)  # URL for accessing the file

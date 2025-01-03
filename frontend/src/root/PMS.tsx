@@ -53,7 +53,7 @@ const defaultLightTheme = deepmerge(defaultTheme, {
             default: '#fafafb',
         },
         primary: {
-            main: '#DEEFF5',
+            main: '#4285F4',
         },
     },
     components: {
